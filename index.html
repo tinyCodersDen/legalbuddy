@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>LexisAI — Legal Intelligence Platform</title>
+<title>LegalBuddy — Legal Intelligence Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -310,7 +310,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="hgrid"></div>
     <div class="hbadge">✦ RAG-Powered Legal Intelligence</div>
     <h1>Understand Any Legal Document<br/><em>Instantly.</em></h1>
-    <p class="hsub">Upload contracts, bills, immigration forms, and filings. LexisAI classifies, retrieves relevant legal context from its corpus, and delivers plain-English breakdowns, risks, and action plans.</p>
+    <p class="hsub">Upload contracts, bills, immigration forms, and filings. LegalBuddy classifies, retrieves relevant legal context from its corpus, and delivers plain-English breakdowns, risks, and action plans.</p>
     <div class="hbtns">
       <button class="hbtn hbtn-p" onclick="goTab('analyze')">Start Analyzing Free →</button>
       <button class="hbtn hbtn-o" onclick="goTab('library')">Browse Document Library</button>
@@ -325,7 +325,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   <section class="features">
     <div class="slbl">What We Do</div>
     <div class="sttl">The Full Legal Intelligence Stack</div>
-    <div class="ssub">From a one-page NDA to the One Big Beautiful Bill — LexisAI has the context to analyze it right.</div>
+    <div class="ssub">From a one-page NDA to the One Big Beautiful Bill — LegalBuddy has the context to analyze it right.</div>
     <div class="fgrid">
       <div class="fcard"><div class="ficon">🧠</div><div class="ftitle">RAG Classification</div><div class="fdesc">Classifies your document across 35+ types — federal bills, immigration forms, contracts, estate documents, and more.</div></div>
       <div class="fcard"><div class="ficon">📖</div><div class="ftitle">Corpus Retrieval</div><div class="fdesc">Retrieves relevant provisions from our legal corpus — OBBB, ACA, I-485, GDPR, and more — to ground every analysis.</div></div>
@@ -339,7 +339,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     <h2>Start Understanding Law Today</h2>
     <p>Free to start. Bring your own Anthropic API key.</p>
     <button class="hbtn hbtn-p" onclick="openAuth('signup')">Create Free Account →</button>
-    <p style="font-size:.7rem;color:var(--text3);margin-top:.9rem">⚠️ LexisAI is for informational purposes only. Not a substitute for professional legal counsel.</p>
+    <p style="font-size:.7rem;color:var(--text3);margin-top:.9rem">⚠️ LegalBuddy is for informational purposes only. Not a substitute for professional legal counsel.</p>
   </section>
 </div>
 
@@ -375,7 +375,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
       <button class="bbtn bgold" id="analyzeBtn" disabled>
         <span id="btnIcon">⚖️</span><span id="btnTxt">Analyze Document</span>
       </button>
-      <div class="disc">⚠️ LexisAI provides AI-generated summaries for informational purposes only. Not legal advice. Always consult a licensed attorney.</div>
+      <div class="disc">⚠️ LegalBuddy provides AI-generated summaries for informational purposes only. Not legal advice. Always consult a licensed attorney.</div>
     </div>
     <div class="rcol" id="rcol">
       <div class="estate">
@@ -885,7 +885,7 @@ async function chatCall(question){
   const ctxChunks = retrieveContext(question + ' ' + S.fileText.slice(0,400), S.docClass, 3);
   const ctx = ctxChunks.slice(0,2).join('\n\n');
 
-  const system = `You are LexisAI, an expert legal assistant. You analyzed a ${label}.
+  const system = `You are LegalBuddy, an expert legal assistant. You analyzed a ${label}.
 ANALYSIS: ${JSON.stringify(S.lastAnalysis||{}).slice(0,1800)}
 DOCUMENT: ${S.fileText.slice(0,4500)}
 CORPUS CONTEXT: ${ctx.slice(0,1000)}
