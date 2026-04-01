@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LexisAI — Legal Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0c10;--surface:#13151c;--surface2:#1b1e28;--border:#2a2d3a;--border2:#383c4d;
+  --gold:#c9a84c;--gold-lt:#e8cb7c;--gold-dk:#8a6520;
+  --text:#e8e4dc;--text2:#9a9589;--text3:#5a5650;
+  --red:#e05c5c;--green:#4caf7d;--amber:#e0a84c;--blue:#5c8fe0;--purple:#9c6ee0;
+  --r:8px;--r2:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── NAV ── */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;background:rgba(11,12,16,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:.04em;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.nav-logo span{color:var(--gold)}
+.nav-tabs{display:flex;gap:.15rem;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{display:flex;align-items:center;gap:.35rem;padding:.38rem .8rem;border-radius:6px;font-size:.77rem;font-weight:500;color:var(--text2);cursor:pointer;border:none;background:none;white-space:nowrap;transition:.2s;font-family:'Outfit',sans-serif}
+.nav-tab:hover{color:var(--text);background:var(--surface)}
+.nav-tab.active{color:var(--gold);background:rgba(201,168,76,.09)}
+.nav-right{display:flex;align-items:center;gap:.6rem;margin-left:auto;flex-shrink:0}
+.nbtn{padding:.36rem .85rem;border-radius:6px;font-size:.77rem;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;border:none;transition:.2s}
+.nbtn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.nbtn-ghost:hover{color:var(--text);border-color:var(--text3)}
+.nbtn-gold{background:var(--gold);color:#0b0c10;font-weight:600}
+.nbtn-gold:hover{background:var(--gold-lt)}
+/* user chip */
+.uchip{display:flex;align-items:center;gap:.45rem;cursor:pointer;padding:.28rem .5rem;border-radius:6px;position:relative}
+.uchip:hover{background:var(--surface2)}
+.uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dk),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#0b0c10}
+.utxt{font-size:.79rem;color:var(--text);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.umenu{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:.5rem;min-width:195px;display:none;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300}
+.uchip:hover .umenu,.uchip:focus-within .umenu{display:block}
+.uminfo{padding:.45rem .7rem;border-bottom:1px solid var(--border);margin-bottom:.3rem}
+.umname{font-size:.81rem;font-weight:600}.umemail{font-size:.69rem;color:var(--text2)}
+.umitem{padding:.46rem .7rem;border-radius:6px;font-size:.79rem;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:.45rem}
+.umitem:hover{background:var(--surface);color:var(--text)}
+.umitem.red:hover{color:var(--red)}
+
+/* ── AUTH MODAL ── */
+.moverlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.moverlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:2rem;width:100%;max-width:400px;position:relative;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mclose{position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.1rem}
+.mclose:hover{color:var(--text)}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:.2rem}
+.modal .msub{font-size:.81rem;color:var(--text2);margin-bottom:1.5rem}
+.fg{margin-bottom:.9rem}
+.fl{font-size:.72rem;font-weight:500;color:var(--text2);letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:.35rem}
+.fi{width:100%;padding:.62rem .85rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:.84rem;outline:none;transition:.2s}
+.fi:focus{border-color:var(--gold)}
+.fi::placeholder{color:var(--text3)}
+.fsub{width:100%;padding:.72rem;background:var(--gold);color:#0b0c10;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:.4rem;transition:.2s}
+.fsub:hover{background:var(--gold-lt)}
+.fswitch{text-align:center;margin-top:.9rem;font-size:.79rem;color:var(--text2)}
+.fswitch a{color:var(--gold);cursor:pointer}
+.ferr{font-size:.75rem;color:var(--red);margin-top:.25rem;display:none}
+
+/* ── PAGE ── */
+#pageWrap{padding-top:58px}
+.tpage{display:none;animation:fadeUp .25s ease}
+.tpage.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;z-index:999;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:.65rem 1rem;font-size:.81rem;max-width:290px;box-shadow:0 8px 24px rgba(0,0,0,.55);transform:translateY(18px);opacity:0;transition:.3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{border-color:rgba(76,175,125,.4);color:var(--green)}
+.toast.red{border-color:rgba(224,92,92,.4);color:var(--red)}
+
+/* ════════ HOME ════════ */
+.hero{min-height:calc(100vh - 58px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1.5rem;position:relative;overflow:hidden}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.18;mask-image:radial-gradient(ellipse 65% 65% at 50% 50%,black,transparent);pointer-events:none}
+.hbadge{display:inline-flex;align-items:center;gap:.4rem;border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:.28rem .85rem;border-radius:20px;font-size:.71rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.4rem;background:rgba(201,168,76,.06);position:relative}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,6vw,5rem);font-weight:700;line-height:1.1;margin-bottom:.9rem;position:relative}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hsub{font-size:clamp(.88rem,2vw,1.04rem);color:var(--text2);max-width:550px;margin:0 auto 2rem;line-height:1.8;position:relative}
+.hbtns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.8rem;position:relative}
+.hbtn{padding:.72rem 1.7rem;border-radius:var(--r);font-size:.88rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:.2s;border:none}
+.hbtn-p{background:var(--gold);color:#0b0c10}
+.hbtn-p:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.hbtn-o{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.hbtn-o:hover{border-color:var(--text2);transform:translateY(-1px)}
+.stats{display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap;padding:1.2rem 1.8rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);position:relative}
+.stat{text-align:center}
+.sn{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--gold-lt)}
+.sl{font-size:.69rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-top:.05rem}
+.features{padding:4rem 1.5rem;max-width:1100px;margin:0 auto}
+.slbl{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.4rem}
+.sttl{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:700;margin-bottom:.5rem}
+.ssub{color:var(--text2);font-size:.87rem;line-height:1.7;max-width:480px;margin-bottom:2.2rem}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.9rem}
+.fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.4rem;transition:.25s}
+.fcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.ficon{font-size:1.75rem;margin-bottom:.65rem}
+.ftitle{font-weight:600;font-size:.9rem;margin-bottom:.3rem}
+.fdesc{font-size:.78rem;color:var(--text2);line-height:1.62}
+.ctasec{text-align:center;padding:3.5rem 1.5rem;background:linear-gradient(180deg,transparent,rgba(201,168,76,.04));border-top:1px solid var(--border)}
+.ctasec h2{font-family:'Cormorant Garamond',serif;font-size:2.3rem;margin-bottom:.7rem}
+.ctasec p{color:var(--text2);margin-bottom:1.8rem;font-size:.9rem}
+
+/* ════════ ANALYZE ════════ */
+.awrap{display:grid;grid-template-columns:305px 1fr;gap:0;max-width:1280px;margin:0 auto;padding:1.5rem;align-items:start}
+.lcol{display:flex;flex-direction:column;gap:.9rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.ph{padding:.58rem 1rem;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:.4rem}
+.pb{padding:.9rem}
+.uzone{border:2px dashed var(--border2);border-radius:var(--r);padding:1.35rem 1rem;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.uzone:hover,.uzone.drag{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.uzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uzi{font-size:1.9rem;margin-bottom:.4rem}
+.uzt{font-size:.78rem;color:var(--text2);line-height:1.5}
+.uzt strong{color:var(--gold)}
+.uzf{font-size:.66rem;color:var(--text3);margin-top:.22rem}
+.flist{display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem}
+.fitem{display:flex;align-items:center;gap:.45rem;padding:.46rem .6rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.75rem}
+.fin{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.fsz{color:var(--text2);font-size:.66rem;flex-shrink:0}
+.frm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.84rem;padding:0;line-height:1}
+.frm:hover{color:var(--red)}
+.olist{display:flex;flex-direction:column;gap:.28rem}
+.orow{display:flex;align-items:center;gap:.55rem;padding:.4rem .42rem;border-radius:6px;cursor:pointer;transition:.15s}
+.orow:hover{background:var(--surface2)}
+.orow input{accent-color:var(--gold);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.orow label{font-size:.78rem;cursor:pointer;flex:1}
+.bbtn{width:100%;padding:.76rem;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:.87rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;transition:.2s}
+.bgold{background:var(--gold);color:#0b0c10}
+.bgold:hover:not(:disabled){background:var(--gold-lt)}
+.bgold:disabled{opacity:.38;cursor:not-allowed}
+.disc{font-size:.66rem;color:var(--text3);line-height:1.6}
+.rcol{display:flex;flex-direction:column;gap:.9rem;padding-left:1.2rem}
+.estate{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:3.8rem 2rem;text-align:center;color:var(--text2)}
+.esico{font-size:3.2rem;margin-bottom:1.1rem;opacity:.28}
+.esttl{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:var(--text);margin-bottom:.45rem}
+.essub{font-size:.83rem;line-height:1.7;max-width:360px;margin:0 auto}
+
+/* loading */
+.lwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:2.8rem 2rem;text-align:center}
+.spin{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lsteps{margin-top:.9rem;display:flex;flex-direction:column;gap:.32rem}
+.ls{font-size:.76rem;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:.35rem;transition:.3s}
+.ls.active{color:var(--gold)}.ls.done{color:var(--green)}
+
+/* result cards */
+.rmeta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.45rem}
+.rmeta h2{font-family:'Cormorant Garamond',serif;font-size:1.32rem}
+.rbadge{font-size:.65rem;padding:.22rem .6rem;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:.28rem;letter-spacing:.05em;background:rgba(92,143,224,.1);border:1px solid rgba(92,143,224,.2);color:var(--blue)}
+.tag{display:inline-flex;align-items:center;padding:.2rem .58rem;border-radius:20px;font-size:.65rem;font-weight:500;letter-spacing:.05em}
+.tg{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+.tgold{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.22);color:var(--gold)}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;animation:rise .32s ease forwards;opacity:0}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.rcard:nth-child(1){animation-delay:.04s}.rcard:nth-child(2){animation-delay:.09s}.rcard:nth-child(3){animation-delay:.15s}.rcard:nth-child(4){animation-delay:.21s}.rcard:nth-child(5){animation-delay:.27s}.rcard:nth-child(6){animation-delay:.33s}
+.rch{padding:.56rem 1rem;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.45rem;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.rcb{padding:.95rem 1.05rem}
+.etext{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;line-height:1.85;color:var(--text)}
+.kpl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.kpi{display:flex;gap:.58rem;padding:.52rem .68rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:6px;font-size:.8rem;line-height:1.58}
+.kpn{flex-shrink:0;width:19px;height:19px;background:var(--gold);color:#0b0c10;border-radius:50%;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.ri{padding:.6rem .7rem;border-radius:6px;border:1px solid var(--border);font-size:.76rem;background:var(--surface2)}
+.rih{display:flex;align-items:center;justify-content:space-between;margin-bottom:.22rem}
+.ril{font-weight:600;font-size:.78rem}
+.rid{color:var(--text2);font-size:.73rem;line-height:1.52}
+.rl{border-left:3px solid var(--green)}.rm{border-left:3px solid var(--amber)}.rh{border-left:3px solid var(--red)}
+.bd{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.07em}
+.bl{background:rgba(76,175,125,.14);color:var(--green)}.bm{background:rgba(224,168,76,.14);color:var(--amber)}.bh{background:rgba(224,92,92,.14);color:var(--red)}
+.nul{display:flex;flex-direction:column;gap:.45rem}
+.nui{padding:.6rem .73rem;border-radius:6px;background:rgba(156,110,224,.06);border:1px solid rgba(156,110,224,.17);font-size:.8rem;line-height:1.62}
+.nut{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:.2rem}
+.acl{display:flex;flex-direction:column;gap:.5rem}
+.aci{display:flex;gap:.65rem;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);align-items:flex-start;transition:.2s}
+.aci:hover{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.acion{font-size:1.22rem;flex-shrink:0;margin-top:1px}
+.acbd{flex:1}
+.act{font-weight:600;font-size:.83rem;margin-bottom:.16rem}
+.acd{font-size:.74rem;color:var(--text2);line-height:1.52}
+.acp{flex-shrink:0;font-size:.6rem;padding:2px 6px;border-radius:20px;font-weight:700}
+.ph-h{background:rgba(224,92,92,.14);color:var(--red)}.pm-m{background:rgba(224,168,76,.14);color:var(--amber)}.pl-l{background:rgba(76,175,125,.14);color:var(--green)}
+.dcinfo{font-size:.75rem;color:var(--text2);padding:.45rem .7rem;background:rgba(92,143,224,.06);border:1px solid rgba(92,143,224,.15);border-radius:6px;display:flex;align-items:center;gap:.38rem}
+
+/* chat */
+.cwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.cmsgs{padding:.9rem;display:flex;flex-direction:column;gap:.6rem;max-height:320px;overflow-y:auto}
+.cm{display:flex;gap:.5rem;font-size:.8rem;line-height:1.62}
+.cav{width:27px;height:27px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;margin-top:2px}
+.cai .cav{background:var(--gold);color:#0b0c10;font-weight:700}
+.cusr .cav{background:var(--surface2);border:1px solid var(--border);order:2;margin-left:auto}
+.cbub{max-width:87%;padding:.5rem .8rem;border-radius:10px;font-size:.8rem}
+.cai .cbub{background:var(--surface2);border:1px solid var(--border);border-radius:10px 10px 10px 2px}
+.cusr .cbub{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.18);border-radius:10px 10px 2px 10px}
+.cusr{flex-direction:row-reverse}
+.cfoot{display:flex;gap:.45rem;padding:.6rem .9rem;border-top:1px solid var(--border);background:rgba(255,255,255,.01)}
+.cin{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.4rem .95rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;outline:none;transition:.2s}
+.cin:focus{border-color:var(--gold)}
+.cin::placeholder{color:var(--text3)}
+.csnd{width:33px;height:33px;border-radius:50%;background:var(--gold);color:#0b0c10;border:none;cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.csnd:hover:not(:disabled){background:var(--gold-lt)}
+.csnd:disabled{opacity:.32;cursor:not-allowed}
+
+/* ════════ LIBRARY ════════ */
+.libpg{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+.libh h1{font-family:'Cormorant Garamond',serif;font-size:2.1rem;margin-bottom:.28rem}
+.libh p{color:var(--text2);font-size:.86rem;margin-bottom:1.4rem}
+.libfs{display:flex;gap:.4rem;margin-bottom:1.3rem;flex-wrap:wrap}
+.libf{padding:.3rem .8rem;border-radius:20px;font-size:.73rem;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif}
+.libf:hover,.libf.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
+.libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:.85rem}
+.lc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:.25s}
+.lc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.lct{padding:1.05rem 1.1rem .75rem;border-bottom:1px solid var(--border)}
+.lbdg{display:inline-block;padding:.17rem .56rem;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.55rem}
+.lb-bill{background:rgba(92,143,224,.12);color:var(--blue)}
+.lb-act{background:rgba(76,175,125,.12);color:var(--green)}
+.lb-exec{background:rgba(224,168,76,.12);color:var(--amber)}
+.lb-contract{background:rgba(201,168,76,.12);color:var(--gold)}
+.lb-immigration{background:rgba(92,143,224,.12);color:var(--blue)}
+.lb-personal{background:rgba(156,110,224,.12);color:var(--purple)}
+.lc h3{font-family:'Cormorant Garamond',serif;font-size:1.06rem;font-weight:600;line-height:1.32;margin-bottom:.3rem}
+.lcdate{font-size:.69rem;color:var(--text3)}
+.lcb{padding:.75rem 1.1rem}
+.lcexc{font-size:.78rem;color:var(--text2);line-height:1.62;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lcf{padding:.55rem 1.1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lftags{font-size:.67rem;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lfact{font-size:.73rem;color:var(--gold);font-weight:500;flex-shrink:0}
+
+/* ════════ DASHBOARD ════════ */
+.dshpg{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+.dshh h1{font-family:'Cormorant Garamond',serif;font-size:2rem}
+.dshh p{color:var(--text2);font-size:.84rem;margin-top:.18rem;margin-bottom:1.4rem}
+.dsts{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:.85rem;margin-bottom:1.3rem}
+.dst{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.15rem}
+.dsl{font-size:.69rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.18rem}
+.dsv{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold-lt);line-height:1}
+.dss{font-size:.71rem;color:var(--text3);margin-top:.18rem}
+.dtwo{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.dp{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.dph{padding:.62rem 1rem;border-bottom:1px solid var(--border);font-size:.69rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.dpb{padding:.9rem}
+.hrow{display:flex;align-items:center;gap:.65rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.hrow:last-child{border-bottom:none}
+.hico{font-size:.95rem;width:27px;height:27px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hnm{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdt{font-size:.67rem;color:var(--text3);flex-shrink:0}
+.lockmsg{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;text-align:center;color:var(--text2);gap:.5rem}
+.lockmsg .li{font-size:2.4rem;opacity:.35;margin-bottom:.2rem}
+
+/* responsive */
+@media(max-width:860px){.awrap{grid-template-columns:1fr}.rcol{padding-left:0;margin-top:.9rem}.rgrid{grid-template-columns:1fr}.dtwo{grid-template-columns:1fr}}
+@media(max-width:600px){.nav-tabs{display:none}.stats{gap:1rem}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topNav">
+  <div class="nav-logo" onclick="goTab('home')">Lexis<span>AI</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="home">🏠 Home</button>
+    <button class="nav-tab" data-tab="analyze">⚖️ Analyze</button>
+    <button class="nav-tab" data-tab="library">📚 Library</button>
+    <button class="nav-tab" data-tab="dashboard">📊 Dashboard</button>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="nbtn nbtn-ghost" id="loginBtn">Log In</button>
+    <button class="nbtn nbtn-gold" id="signupBtn">Sign Up Free</button>
+  </div>
+</nav>
+
+<!-- AUTH MODAL -->
+<div class="moverlay" id="authModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeAuth()">✕</button>
+    <h2 id="mTitle">Welcome Back</h2>
+    <p class="msub" id="mSub">Sign in to save your analysis history.</p>
+    <div id="loginForm">
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="liEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="liPwd" type="password" placeholder="••••••••"/></div>
+      <div class="ferr" id="liErr"></div>
+      <button class="fsub" id="doLogin">Sign In</button>
+      <div class="fswitch">No account? <a onclick="setMode('signup')">Create one free →</a></div>
+    </div>
+    <div id="signupForm" style="display:none">
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="suName" type="text" placeholder="Jane Smith"/></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="suEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="suPwd" type="password" placeholder="Min. 6 characters"/></div>
+      <div class="ferr" id="suErr"></div>
+      <button class="fsub" id="doSignup">Create Account</button>
+      <div class="fswitch">Have an account? <a onclick="setMode('login')">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<div id="pageWrap">
+
+<!-- HOME -->
+<div class="tpage active" id="tab-home">
+  <section class="hero">
+    <div class="hgrid"></div>
+    <div class="hbadge">✦ RAG-Powered Legal Intelligence</div>
+    <h1>Understand Any Legal Document<br/><em>Instantly.</em></h1>
+    <p class="hsub">Upload contracts, bills, immigration forms, and filings. LexisAI classifies, retrieves relevant legal context from its corpus, and delivers plain-English breakdowns, risks, and action plans.</p>
+    <div class="hbtns">
+      <button class="hbtn hbtn-p" onclick="goTab('analyze')">Start Analyzing Free →</button>
+      <button class="hbtn hbtn-o" onclick="goTab('library')">Browse Document Library</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="sn">35+</div><div class="sl">Doc Types</div></div>
+      <div class="stat"><div class="sn">RAG</div><div class="sl">Grounded</div></div>
+      <div class="stat"><div class="sn">15</div><div class="sl">Corpus Docs</div></div>
+      <div class="stat"><div class="sn">100%</div><div class="sl">Private</div></div>
+    </div>
+  </section>
+  <section class="features">
+    <div class="slbl">What We Do</div>
+    <div class="sttl">The Full Legal Intelligence Stack</div>
+    <div class="ssub">From a one-page NDA to the One Big Beautiful Bill — LexisAI has the context to analyze it right.</div>
+    <div class="fgrid">
+      <div class="fcard"><div class="ficon">🧠</div><div class="ftitle">RAG Classification</div><div class="fdesc">Classifies your document across 35+ types — federal bills, immigration forms, contracts, estate documents, and more.</div></div>
+      <div class="fcard"><div class="ficon">📖</div><div class="ftitle">Corpus Retrieval</div><div class="fdesc">Retrieves relevant provisions from our legal corpus — OBBB, ACA, I-485, GDPR, and more — to ground every analysis.</div></div>
+      <div class="fcard"><div class="ficon">⚠️</div><div class="ftitle">Specific Risk Detection</div><div class="fdesc">Surfaces concrete risks tied to actual clauses — cites specific provisions, dollar amounts, and deadlines.</div></div>
+      <div class="fcard"><div class="ficon">🗺️</div><div class="ftitle">Suggested Actions</div><div class="fdesc">Tailored next steps for each document type — immigration, estate, employment, real estate, tax, and more.</div></div>
+      <div class="fcard"><div class="ficon">🔍</div><div class="ftitle">Nuance Detection</div><div class="fdesc">Flags hidden triggers, ambiguous definitions, auto-renewal clauses, and carve-outs non-lawyers consistently miss.</div></div>
+      <div class="fcard"><div class="ficon">💬</div><div class="ftitle">Document Q&A</div><div class="fdesc">Ask anything about your specific document. Every answer is grounded in the actual text and retrieved legal context.</div></div>
+    </div>
+  </section>
+  <section class="ctasec">
+    <h2>Start Understanding Law Today</h2>
+    <p>Free to start. Bring your own Anthropic API key.</p>
+    <button class="hbtn hbtn-p" onclick="openAuth('signup')">Create Free Account →</button>
+    <p style="font-size:.7rem;color:var(--text3);margin-top:.9rem">⚠️ LexisAI is for informational purposes only. Not a substitute for professional legal counsel.</p>
+  </section>
+</div>
+
+<!-- ANALYZE -->
+<div class="tpage" id="tab-analyze">
+  <div class="awrap">
+    <div class="lcol">
+      <div class="panel">
+        <div class="ph">📄 Upload Document</div>
+        <div class="pb">
+          <div class="uzone" id="dropZone">
+            <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx"/>
+            <div class="uzi">⬆️</div>
+            <p class="uzt"><strong>Drop a file here</strong> or click to browse</p>
+            <div class="uzf">PDF · TXT · DOC · DOCX — Max 15 MB</div>
+          </div>
+          <div class="flist" id="fileList"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph">⚙️ Analysis Options</div>
+        <div class="pb">
+          <div class="olist">
+            <div class="orow"><input type="checkbox" data-key="summary" checked/><label>📋 Executive Summary</label></div>
+            <div class="orow"><input type="checkbox" data-key="keypoints" checked/><label>📌 Key Provisions & Obligations</label></div>
+            <div class="orow"><input type="checkbox" data-key="risks" checked/><label>⚠️ Risk Assessment</label></div>
+            <div class="orow"><input type="checkbox" data-key="nuances" checked/><label>🔍 Legal Nuances & Red Flags</label></div>
+            <div class="orow"><input type="checkbox" data-key="actions" checked/><label>🗺️ Suggested Actions</label></div>
+            <div class="orow"><input type="checkbox" data-key="chat" checked/><label>💬 Follow-up Q&A</label></div>
+          </div>
+        </div>
+      </div>
+      <button class="bbtn bgold" id="analyzeBtn" disabled>
+        <span id="btnIcon">⚖️</span><span id="btnTxt">Analyze Document</span>
+      </button>
+      <div class="disc">⚠️ LexisAI provides AI-generated summaries for informational purposes only. Not legal advice. Always consult a licensed attorney.</div>
+    </div>
+    <div class="rcol" id="rcol">
+      <div class="estate">
+        <div class="esico">⚖️</div>
+        <div class="esttl">Ready to Analyze</div>
+        <p class="essub">Upload a legal document and click <strong style="color:var(--gold)">Analyze</strong> to get a RAG-powered breakdown.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY -->
+<div class="tpage" id="tab-library">
+  <div class="libpg">
+    <div class="libh">
+      <h1>Document Library</h1>
+      <p>Browse and analyze real legislation, immigration forms, and legal documents — all part of the RAG corpus.</p>
+    </div>
+    <div class="libfs" id="libFilters"></div>
+    <div class="libgrid" id="libGrid"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="tpage" id="tab-dashboard">
+  <div class="dshpg" id="dashContent"></div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  LEGAL CORPUS  (inlined — the RAG knowledge base)
+// ═══════════════════════════════════════════════════════
+const CORPUS = [
+  {id:"obbb",title:"One Big Beautiful Bill (H.R. 1, 119th Congress)",date:"May 2025",category:"bill",badge:"bill",doc_class:"federal_bill",library:true,tags:"Tax · Medicaid · Immigration · Student Loans · Energy",
+   text:`H.R. 1 — ONE BIG BEAUTIFUL BILL ACT. 119th Congress. BE IT ENACTED by the Senate and House of Representatives of the United States of America in Congress assembled. TITLE I — TAX PROVISIONS. SEC. 101. The individual income tax rates from the Tax Cuts and Jobs Act of 2017 are made permanent. Top rate remains 37% for incomes over $600,000 married filing jointly. Standard deduction increased to $30,000 married filing jointly, $15,000 single filers. SEC. 102. Child tax credit increased to $2,500 per qualifying child for tax years 2025-2028, reverting to $2,000 thereafter. Refundable portion capped at $1,700. Phaseout begins at $400,000 married filing jointly. SEC. 103. SALT deduction cap made permanent at $10,000. Temporarily increased to $30,000 married filing jointly for incomes under $500,000 for tax years 2025-2029. SEC. 104. Federal estate tax exemption permanently set at $15,000,000 per individual, $30,000,000 for married couples, indexed for inflation. SEC. 105. 20% pass-through deduction under Section 199A made permanent. SEC. 106. Tips received by food service, hospitality, and personal care employees excluded from gross income up to $25,000/year for 2025-2028. Overtime pay excluded up to $10,000/year for earners under $150,000. SEC. 107. Corporate tax rate reduced from 21% to 20% for domestic manufacturers. TITLE II — MEDICAID. SEC. 201. Able-bodied adults aged 18-64 without dependents must complete 80 hours/month of community engagement (work, training, education, or service) as Medicaid eligibility condition beginning January 1, 2027. Exemptions for pregnant women, disabled individuals, caregivers of children under 6. SEC. 202. Federal Medicaid matching rate for ACA expansion states reduced from 90% to 80% beginning fiscal year 2027. SEC. 203. Enhanced ACA premium tax credit subsidies expire December 31, 2025 and are not renewed. Premium tax credit eligibility returns to 100-400% FPL. SEC. 204. SNAP asset tests reinstated at $5,000 limit. Work requirements extended to age 54. States must conduct eligibility redeterminations every 6 months. TITLE III — STUDENT LOANS. SEC. 301. All income-driven repayment plans consolidated into single Repayment Assistance Plan (RAP). Monthly payments set at 10% of discretionary income. Loan forgiveness after 30 years. SAVE, PAYE, and IBR plans closed to new enrollers after July 1, 2026. SEC. 302. Public Service Loan Forgiveness extended from 10 to 15 years. Forgiveness capped at $75,000 undergraduate, $125,000 graduate. SEC. 303. Parent PLUS loan lifetime limit capped at $65,000. TITLE IV — IMMIGRATION. SEC. 401. Appropriates $46,500,000,000 for southern border wall construction. SEC. 402. Appropriates $14,000,000,000 to hire 10,000 additional Border Patrol agents and 5,000 CBP officers. $9,000,000,000 for detention facilities with minimum 100,000 bed capacity. SEC. 403. Asylum credible fear standard raised to "clear probability of persecution." $1,000 asylum processing fee established. SEC. 404. Diversity Visa Lottery eliminated. Annual refugee admissions reduced to 15,000. H-1B minimum wage floor raised to 120% of prevailing wage. TITLE V — ENERGY. SEC. 501. Clean Electricity Production Credit (45Y), Clean Electricity Investment Credit (48E), Clean Vehicle Credit (30D), and Energy Efficient Home Improvement Credit (25C) repealed effective December 31, 2025. Wind production tax credit reduced by 50% for projects beginning after December 31, 2025. SEC. 502. OCS lease sales required at minimum quarterly intervals. Royalty rate for new offshore oil and gas leases reduced from 18.75% to 12.5%. TITLE VI. SEC. 601. Statutory debt limit increased by $4,000,000,000,000. TITLE VIII. CBO estimates $3,800,000,000,000 deficit increase over 10-year budget window 2026-2035. Passed House 215-214, May 22, 2025.`},
+  {id:"aca",title:"Affordable Care Act — Key Provisions",date:"March 2010",category:"act",badge:"act",doc_class:"federal_act",library:true,tags:"Healthcare · Insurance · Medicaid · Subsidies",
+   text:`PATIENT PROTECTION AND AFFORDABLE CARE ACT, Public Law 111-148. Insurance Market Reforms: No lifetime limits on essential health benefits. Annual limits prohibited. Rescission prohibited except for fraud. Preventive services without cost-sharing required for USPSTF A/B recommendations. Dependent coverage extended to age 26. Pre-existing condition exclusions prohibited for children (2010), all individuals (2014). Guaranteed issue and renewability in individual and small group markets. Essential Health Benefits — 10 categories required in all qualified health plans: ambulatory patient services, emergency services, hospitalization, maternity and newborn care, mental health and substance use disorder services (with parity), prescription drugs, rehabilitative services, laboratory services, preventive services, pediatric services including dental and vision. Health Benefit Exchanges offer four metal tiers: Bronze (60% actuarial value), Silver (70%), Gold (80%), Platinum (90%). Premium Tax Credits available for incomes 100-400% FPL for exchange coverage. Contribution ranges from 2.07% at 100% FPL to 9.78% at 400% FPL of household income. Medicaid expansion to 133% FPL (effectively 138% with 5% disregard). Federal pays 100% of newly eligible costs through 2016, phasing to 90% by 2020 and permanently. Expansion made optional by NFIB v. Sebelius (2012). 41 states and DC expanded as of 2024. Employer mandate: 50+ FTE employees must offer minimum essential coverage meeting 60% actuarial value and affordability (premium ≤ 9.12% of household income for 2023) or pay $2,970/employee penalty. Individual mandate penalty reduced to $0 by Tax Cuts and Jobs Act effective January 1, 2019.`},
+  {id:"gdpr",title:"GDPR — General Data Protection Regulation",date:"May 2018",category:"act",badge:"act",doc_class:"federal_regulation",library:true,tags:"Privacy · Data Protection · Technology · EU",
+   text:`REGULATION (EU) 2016/679 — GDPR. Applies to organizations in the EU processing personal data AND organizations outside EU offering goods/services to or monitoring EU residents. Personal data = any information relating to identified or identifiable natural person including name, email, IP address, location data, cookie identifiers, biometric data. Six lawful bases for processing: consent (freely given, specific, informed, unambiguous opt-in), contract performance, legal obligation, vital interests, public task, legitimate interests. Consent cannot be bundled with terms of service; must be as easy to withdraw as to give. Data Subject Rights: Right of access (respond within 30 days, free); right to rectification; right to erasure/right to be forgotten; right to restriction; right to data portability (machine-readable format); right to object to legitimate interest and direct marketing; rights against solely automated decisions with significant effects. Data breach notification: supervisory authority within 72 hours; data subjects without undue delay when high risk. International transfers only to adequate countries, under Standard Contractual Clauses, Binding Corporate Rules, or explicit consent. Schrems II (2020) invalidated EU-US Privacy Shield; updated SCCs required. Children under 16 require parental consent. Penalties: Tier 1 (less serious) up to €10M or 2% global turnover; Tier 2 (core principles, data subject rights) up to €20M or 4% global turnover. Notable fines: Meta €1.2B (2023), Amazon €746M (2021), WhatsApp €225M (2021).`},
+  {id:"i485",title:"USCIS Form I-485 — Adjustment of Status (Green Card)",date:"2024",category:"immigration",badge:"immigration",doc_class:"i485",library:true,tags:"Immigration · Green Card · USCIS · Adjustment of Status",
+   text:`FORM I-485 — APPLICATION TO REGISTER PERMANENT RESIDENCE OR ADJUST STATUS. Eligibility: currently in the United States; immigrant visa immediately available; admissible to the United States. Categories: immediate relative of U.S. citizen (spouse, unmarried child under 21, parent); approved immigrant petition with current priority date; refugee/asylee with 1+ years continuous presence; VAWA self-petitioner; special immigrant categories. Must have maintained continuous lawful status. Section 245(i) exception for beneficiaries of petitions filed on or before April 30, 2001 with $1,000 penalty fee. Required documents: Form I-485; Form I-864 Affidavit of Support; Form I-693 Medical Examination (sealed, USCIS-approved civil surgeon); two passport photos; government-issued photo ID; passport admission stamp copy; I-94 record; approved immigrant petition; birth certificate with certified translation; 3 years tax returns; police clearances from all countries lived in for 6+ months since age 16. Filing fee: $1,440 for ages 14-78 ($950 under age 14). Biometrics appointment required at Application Support Center. Do NOT travel without Form I-131 Advance Parole — departure may be treated as abandonment of pending application. Processing times: 12-36 months average. Public Charge evaluation considers age, health, family status, assets, financial status, education, skills. Making false statement is federal crime punishable by up to 5 years imprisonment.`},
+  {id:"n400",title:"USCIS Form N-400 — Naturalization Application",date:"2024",category:"immigration",badge:"immigration",doc_class:"naturalization",library:true,tags:"Immigration · Citizenship · USCIS · Naturalization",
+   text:`FORM N-400 — APPLICATION FOR NATURALIZATION. General 5-Year Rule: 18+ years old; LPR for at least 5 years; continuous residence in US for 5 years immediately preceding filing; physically present in US for at least 30 months out of preceding 5 years; resided in state or USCIS district for at least 3 months. Marriage to U.S. Citizen 3-Year Rule: married to and living with U.S. citizen for 3 years; spouse must have been U.S. citizen for 3 years; LPR for at least 3 years; physically present 18 months out of preceding 3 years. Continuous residence interrupted by single absence of 6-12 months (presumption of abandonment, rebuttable). Absence over 12 months generally breaks continuous residence unless re-entry permit (I-131) obtained before departure. Good Moral Character required for 5 years (or 3 years) preceding application. Permanent bars: murder, aggravated felony conviction after November 29, 1990, persecution. Temporary bars during statutory period: crimes involving moral turpitude, drug offenses, willful failure to support dependents, confinement 180+ days, false testimony for immigration benefits. English test: read, write, speak English. Exceptions: 50/20 rule (50+ years old, LPR 20+ years) and 55/15 rule allow test in native language. Civics test: answer 6 of 10 questions correctly from 100 civics questions. Filing fee: $760 ($320 military). Processing after filing: receipt, biometrics, interview (6-18 months), decision, oath ceremony. Oath of Allegiance required to renounce allegiance to foreign states. Denial appeal: Form N-336, $800 fee, within 30 days.`},
+  {id:"i589",title:"USCIS Form I-589 — Asylum Application",date:"2024",category:"immigration",badge:"immigration",doc_class:"asylum",library:true,tags:"Immigration · Asylum · Refugee · USCIS · Persecution",
+   text:`FORM I-589 — APPLICATION FOR ASYLUM AND WITHHOLDING OF REMOVAL. May file if physically present in US or at port of entry and not a lawful permanent resident. Must file within one year of last arrival unless changed or extraordinary circumstances apply. Five protected grounds: race, religion, nationality, membership in a particular social group (PSG), political opinion. Well-founded fear standard: subjective (genuine fear) and objective (reasonable, 1-in-10 chance of persecution satisfies objective component). Persecution = serious harm including physical violence, imprisonment, torture, death threats, severe discrimination affecting livelihood. One-year deadline exceptions: changed circumstances (changed country conditions or personal circumstances); extraordinary circumstances (serious illness, legal disability, ineffective assistance of counsel). Affirmative asylum: file with USCIS asylum office, interview scheduled (12-24+ months), if approved granted asylum, if not approved referred to immigration court. Defensive asylum: raised as defense in removal proceedings before Immigration Judge. Withholding of removal standard: more likely than not (>50%) persecution. Convention Against Torture: more likely than not to be tortured, no nexus requirement, cannot be denied on criminal bars. Bars to asylum: persecution of others, particularly serious crime (aggravated felony presumed), serious non-political crime, national security danger, firm resettlement in third country, safe third country agreement. Derivatives: spouse and unmarried children under 21 may be included. Employment Authorization: apply after 180 days of filing. Path to green card: apply Form I-485 one year after asylum grant; 10,000 cap on adjustments per fiscal year.`},
+  {id:"nda",title:"Mutual Non-Disclosure Agreement (Standard)",date:"2024",category:"contract",badge:"contract",doc_class:"nda",library:true,tags:"NDA · Confidentiality · Business · Contracts",
+   text:`MUTUAL NON-DISCLOSURE AGREEMENT. Purpose: to explore a potential business relationship and protect confidential information shared between parties. Confidential Information definition: any information with commercial value including business plans, financial data, customer lists, trade secrets, technical data, product designs, source code, marketing strategies, personnel information. Exclusions from Confidential Information: publicly known information; information rightfully in receiving party's possession before disclosure; information rightfully obtained from third party without restriction; independently developed information. Obligations: hold in strict confidence; use solely for the Purpose; not disclose to third parties without prior written consent; protect with at least the same degree of care as own confidential information, no less than reasonable care; immediately notify of unauthorized disclosure. Permitted disclosures: employees and contractors with need to know who are bound by equivalent confidentiality obligations. Compelled disclosure: provide prompt written notice to other party to seek protective order; disclose only minimum required. Term: 3 years from execution. Trade secret protections survive termination for an additional 2 years, trade secrets protected indefinitely. Return or destruction of confidential information required upon request or termination. No license granted beyond limited use for the Purpose. Breach may cause irreparable harm; injunctive relief may be appropriate. Governing law: State of Delaware. Venue: Wilmington, Delaware courts.`},
+  {id:"employment",title:"Employment Agreement (At-Will)",date:"2024",category:"contract",badge:"contract",doc_class:"employment_contract",library:true,tags:"Employment · Contract · At-Will · Non-Compete",
+   text:`EMPLOYMENT AGREEMENT. Position: Employee to perform assigned duties and devote full working time to Company. Compensation: base salary payable per standard payroll schedule; discretionary annual bonus based on individual and Company performance at Company's sole discretion; standard benefits package. At-will employment: either party may terminate at any time for any reason or no reason with or without cause and with or without notice. Nothing creates employment contract for specified term or alters at-will nature. Confidentiality: Employee will have access to Confidential Information including business plans, financial data, customer lists, product roadmaps, trade secrets. Must hold in strict confidence during and after employment. IP Assignment: inventions, developments, improvements, works of authorship created during employment are sole property of Company. Employee assigns all right, title, and interest including inventions created outside working hours if related to Company business or using Company resources. Prompt disclosure of all inventions required. Non-solicitation: for 12 months following termination, may not solicit, recruit, or hire any employee or contractor; may not induce customers, clients, or vendors to reduce business with Company. Non-compete: for 12 months following termination, may not directly or indirectly engage in competing business in markets where Company operates. Arbitration: all disputes resolved by binding JAMS arbitration. Class and collective action waiver. Governing law: state where Employee primarily works.`},
+  {id:"lease",title:"Residential Lease Agreement (Standard)",date:"2024",category:"contract",badge:"contract",doc_class:"lease",library:true,tags:"Lease · Rental · Housing · Tenant Rights",
+   text:`RESIDENTIAL LEASE AGREEMENT. Term: fixed term lease; automatically converts to month-to-month upon expiration unless 30-day written notice of termination. Rent: monthly amount due first day of each month; late fee of 5% or $75 (whichever greater) if paid after 5th of month; $35 returned check fee. Security deposit: 1-2 months rent; may be applied to unpaid rent, damage beyond normal wear and tear, cleaning costs. Return deadline varies by state: California 21 days, Texas 30 days, New York 14 days, Florida 15-60 days. Utilities: tenant typically responsible for electricity, gas, water, trash, cable. Landlord responsible for property taxes, insurance, structural repairs, common areas. Maintenance: tenant maintains in clean sanitary condition; report damage promptly; no alterations without written consent. Landlord must maintain habitable condition; make repairs within reasonable time after notice. Entry: emergency without notice; non-emergency with 24-hour advance written notice; entry between 8 AM and 8 PM. Prohibited: sublease without consent; unauthorized pets (pet deposit $200-500, pet rent $25-75/month); illegal activities; excessive noise 10PM-8AM. Early termination fee: two months rent plus rent through date replacement tenant occupies. 30-day written notice required. Military personnel may terminate without penalty under SCRA. Default: 3-day Notice to Pay or Quit for nonpayment; 3-day Notice to Cure or Quit for violations; followed by unlawful detainer proceedings. State deposit limits: California 2 months unfurnished; Texas unlimited; New York 1-2 months. Habitability: tenant may repair and deduct, withhold rent into escrow, or terminate in most states.`},
+  {id:"will",title:"Last Will and Testament (Standard Form)",date:"2024",category:"personal",badge:"personal",doc_class:"will_trust",library:true,tags:"Estate Planning · Will · Probate · Executor · Beneficiary",
+   text:`LAST WILL AND TESTAMENT. Testator of legal age and sound mind, not under duress, hereby revokes all prior wills and codicils. Executor appointment: primary and alternate executor with authority to collect assets, pay debts, sell property, file taxes, distribute estate, serve without bond. Debts and taxes: executor pays all legally enforceable debts, funeral expenses, administration costs, estate and inheritance taxes. Specific bequests: named items to named beneficiaries; if beneficiary does not survive testator by 30 days, bequest lapses into residuary estate. Residuary estate: all rest, residue, and remainder passes to primary beneficiaries; if primary beneficiary does not survive 30 days, passes to alternate beneficiaries in equal shares. Per stirpes distribution: if beneficiary predeceases leaving descendants, their share passes to descendants by right of representation. Minor beneficiaries: share held under Uniform Transfers to Minors Act by custodian until age 21; distributions may be made for health, education, maintenance, and support. Guardian of minor children: primary and alternate guardian nominated to serve without bond. No-contest clause: any beneficiary who contests this will forfeits their entire bequest. Simultaneous death: if spouses die within 30 days of each other, will construed as if testator survived spouse. Probate: public process, 6-24+ months, costs 3-7% of estate. Beneficiary designations on retirement accounts and life insurance override the will and must be updated separately. Step-up in basis at death eliminates capital gains on appreciation. Portability allows surviving spouse to use deceased spouse's unused estate tax exemption by filing Form 706 within 5 years.`},
+  {id:"poa",title:"Durable Power of Attorney (General)",date:"2024",category:"personal",badge:"personal",doc_class:"power_of_attorney",library:true,tags:"Estate Planning · Power of Attorney · Elder Law · Agent",
+   text:`DURABLE POWER OF ATTORNEY. Durable means NOT affected by subsequent disability or incapacity; remains effective even if principal becomes mentally or physically disabled. Granted powers include: financial matters (manage, buy, sell, lease all real and personal property; banking; borrow money; pay bills); investments (purchase, sell, exchange stocks, bonds, mutual funds); taxes (prepare, sign, file returns; represent before IRS; receive refunds); government benefits (apply for Social Security, Medicare, Medicaid); legal matters (initiate, defend, settle claims; retain attorneys; accept service of process; but NOT make or revoke a will); business operations; gifts up to annual gift tax exclusion ($18,000 per recipient in 2024). Healthcare decisions: separately authorized or use Healthcare Power of Attorney. Limitations: agent may NOT make or change testator's will; change beneficiary designations without written consent; use assets for agent's personal benefit except as compensation. Fiduciary duty: act in best interests; loyalty; reasonable care; keep assets separate; maintain records; provide accounting on request. Compensation: reasonable amount if authorized. Successor agent appointed if primary agent cannot serve. Revocation: by signed notarized written revocation delivered to agent and third parties at any time principal is competent. Automatically terminates at principal's death. Types: Immediate (effective upon signing) vs. Springing (effective only upon incapacity certified by two licensed physicians). Financial institutions may require their own POA form or refuse forms older than 12 months.`},
+  {id:"eviction",title:"3-Day Notice to Pay Rent or Quit",date:"2024",category:"personal",badge:"personal",doc_class:"eviction_notice",library:true,tags:"Eviction · Housing · Tenant Rights · Landlord",
+   text:`THREE-DAY NOTICE TO PAY RENT OR QUIT. Tenant notified that rent for specified period is due and unpaid. Tenant required to pay full amount within THREE (3) DAYS after service of this notice OR vacate and surrender possession. Failure to comply results in landlord instituting unlawful detainer proceedings for forfeiture of lease, recovery of possession, damages, and attorney fees. Tenant rights: right to pay full amount due within notice period to avoid eviction; partial rent does NOT cure default unless landlord accepts in writing as full payment. Retaliatory eviction prohibited — landlord may not serve notice because tenant complained to government agency, exercised legal right, or organized with other tenants. Domestic violence victims may have right to terminate early without penalty. Response options: Pay full amount and get signed receipt; Vacate before notice period expires; Contest if notice is improper (wrong amount, retaliatory, habitability defense) by contacting tenant rights attorney; Do nothing results in Summons and Complaint with 5 business days to file written response. State notice periods: California 3 days pay or quit; Texas 3 days (may shorten to 24 hours for certain violations); New York 14-day rent demand; Florida 3 days; Illinois 5 days; Washington 14 days. Free legal aid at lawhelp.org, lsc.gov/find-legal-aid, 211.`},
+  {id:"w2",title:"IRS Form W-2 — Wage and Tax Statement",date:"2024",category:"personal",badge:"personal",doc_class:"tax_form",library:true,tags:"Tax · IRS · W-2 · Employment Income · Withholding",
+   text:`IRS FORM W-2. Employers must furnish W-2 to employees by January 31; file with SSA by January 31. Box 1: total taxable wages for federal income tax; EXCLUDES pre-tax 401k, health insurance premiums, HSA, FSA contributions. Box 2: federal income tax withheld — enter on Form 1040 Line 25a. Box 3: Social Security wages — includes Box 1 PLUS pre-tax 401k deferrals; capped at $168,600 (2024 Social Security wage base). Box 4: Social Security tax withheld — should equal 6.2% of Box 3, max $10,453.20 in 2024. Multiple employer overpayment: claim credit on Form 1040. Box 5: Medicare wages — no wage cap. Box 6: Medicare tax withheld — 1.45% of Box 5; additional 0.9% Additional Medicare Tax on wages over $200,000. Box 10: dependent care benefits — amounts up to $5,000 ($2,500 married filing separately) excluded from income. Box 12 common codes: D = 401k contributions (pre-tax, reduces Box 1); W = HSA contributions; DD = employer health coverage cost (informational only, not taxable); EE = Roth 401k contributions. Box 13: retirement plan checkbox affects IRA deductibility. Errors: request W-2c from employer; missing W-2 by February 15 contact employer, then IRS at 800-829-1040 by February 28. Tax filing deadline April 15; Form 4868 extends filing 6 months (not payment deadline).`},
+  {id:"chips",title:"CHIPS and Science Act of 2022",date:"August 2022",category:"act",badge:"act",doc_class:"federal_act",library:true,tags:"Technology · Semiconductors · Manufacturing · China · National Security",
+   text:`CHIPS AND SCIENCE ACT, Public Law 117-167 (August 9, 2022). CHIPS for America Fund: $52,700,000,000 total. Manufacturing incentives: $39,000,000,000 in grants, loans, loan guarantees for semiconductor fab construction, expansion, or modernization in the United States. R&D and workforce: $13,200,000,000. International technology security fund: $500,000,000. Eligible facilities: leading-edge logic chips, memory chips, and mature-node chips for defense and critical infrastructure. China restriction guardrails (10-year clawback): any recipient who significantly expands semiconductor manufacturing capacity in foreign country of concern (China, Russia, North Korea, Iran) within 10 years must repay full amount with interest. Significant expansion defined as any expansion of leading-edge or advanced chip capacity; mature-node expansion above 5% threshold. Recipients may not enter joint research or technology licensing with foreign countries of concern posing national security risk. Advanced Manufacturing Investment Credit: 25% investment tax credit (Section 48D) for semiconductor manufacturing equipment and fab construction. Direct pay option for entities without tax liability. Workforce requirements: all recipients must provide childcare for facility workers; develop worker and community investment plan; no stock buybacks or dividends during grant period. National Science Foundation: $81,000,000,000 authorized over 5 years including $20B for new TIP Directorate; $13B for STEM education. DOE Office of Science: $68,000,000,000 including $21.5B clean energy demonstrations. Investment announcements: TSMC $65B Arizona ($6.6B grant); Intel $100B multi-state ($8.5B grant + $11B loan); Samsung $17B Texas ($6.4B grant); Micron $125B memory ($6.1B grant).`},
+  {id:"eo14110",title:"Executive Order 14110 — Safe & Trustworthy AI",date:"October 2023",category:"exec",badge:"exec",doc_class:"executive_order",library:true,tags:"AI Policy · Technology · National Security · Executive Order",
+   text:`EXECUTIVE ORDER 14110, October 30, 2023. Developers of dual-use foundation models trained using more than 10^26 floating-point operations (FLOPs) must: notify federal government when training such models; share results of all red-team safety tests with U.S. government before public release. NIST shall create standards, tools, and tests for AI safety, security, and trustworthiness including red-teaming guidelines and watermarking of AI-generated content. Department of Commerce to develop guidance for authentication and watermarking of government-generated synthetic content. Department of Energy and intelligence community to evaluate AI risks to critical infrastructure and CBRN threats enabled by AI. DHS to establish AI Safety and Security Board. National AI Research Resource pilot to provide researchers access to computing resources. USPTO to issue guidance on patent and copyright issues raised by AI. Federal agencies to streamline visa processes for AI talent (O-1A, EB-1, EB-2). Department of Labor to publish guidance within 180 days on employers' obligations when AI used in employment decisions (hiring, firing, promotion). Attorney General to evaluate AI in criminal justice system. HHS to establish AI Task Force for healthcare AI framework. Each agency to designate Chief AI Officer within 60 days. Agencies to conduct inventories of AI use cases and publish annual reports. STATUS (2025): President Trump revoked EO 14110 by EO 14179 on January 20, 2025. Some NIST standards remain in development independent of EO.`}
+];
+
+// ═══════════════════════════════════════════════════════
+//  SUGGESTED ACTIONS (per document class)
+// ═══════════════════════════════════════════════════════
+const ACTIONS = {
+  federal_bill:[
+    {icon:"📞",title:"Contact Your Representatives",description:"Find your senators and representative at congress.gov and express your position before any floor vote.",priority:"high"},
+    {icon:"🗺️",title:"Identify Sections That Affect You",description:"Search the bill text for your income bracket, employer type, or benefits program to find directly relevant provisions.",priority:"high"},
+    {icon:"📰",title:"Track on congress.gov",description:"Monitor committee markups, amendments, and scheduled floor votes on congress.gov.",priority:"medium"},
+    {icon:"⚖️",title:"Consult a Tax or Benefits Attorney",description:"If tax, Medicaid, or student-loan provisions affect you materially, seek personalized legal or financial counsel.",priority:"medium"},
+  ],
+  employment_contract:[
+    {icon:"⚠️",title:"Scrutinize the Non-Compete",description:"Check geographic scope, duration, and covered roles. Non-competes can block your next job for 1–2 years.",priority:"high"},
+    {icon:"💰",title:"Negotiate Before Signing",description:"Salary, bonus, equity, vacation, and remote-work terms are almost always negotiable before you sign.",priority:"high"},
+    {icon:"📋",title:"Understand At-Will and Severance",description:"At-will means termination at any time. Confirm whether severance is guaranteed or purely discretionary.",priority:"high"},
+    {icon:"📅",title:"Calendar Equity Vesting",description:"Note your 1-year cliff date and monthly vesting schedule so you never leave money on the table.",priority:"medium"},
+  ],
+  nda:[
+    {icon:"🔍",title:"Narrow the Confidentiality Definition",description:"Overly broad definitions can restrict your own prior work. Push for a precise, limited scope.",priority:"high"},
+    {icon:"📅",title:"Verify the Term / Expiration",description:"NDAs with no end date bind you indefinitely. Negotiate a 2–5 year term.",priority:"high"},
+    {icon:"✏️",title:"Request Mutual Obligations",description:"If both parties share sensitive info, a one-sided NDA is inequitable — request mutual terms.",priority:"medium"},
+    {icon:"⚖️",title:"Check Jurisdiction and Remedies",description:"Know which state's law governs and what damages or injunctive relief are available for breach.",priority:"medium"},
+  ],
+  lease:[
+    {icon:"📸",title:"Photograph the Property on Day 1",description:"Document every room with timestamps and email to your landlord within 24 hours to create a dispute-proof record.",priority:"high"},
+    {icon:"💰",title:"Know Your State's Deposit Rules",description:"Check your state's deposit cap, itemization requirements, and return deadline (14–30 days varies by state).",priority:"high"},
+    {icon:"📋",title:"Read the Early Termination Clause",description:"Most leases charge 1–2 months rent for early exit. Military tenants have SCRA protections.",priority:"high"},
+    {icon:"📅",title:"Calendar the Renewal Deadline",description:"Many leases auto-renew unless you give 30–60 days written notice. Missing it locks you in for another year.",priority:"medium"},
+  ],
+  i485:[
+    {icon:"⚖️",title:"Hire an Immigration Attorney",description:"I-485 errors — even minor ones — cause denials and years of delay. An AILA-member attorney is strongly recommended.",priority:"high"},
+    {icon:"💉",title:"Schedule Your Medical Exam (I-693)",description:"Book with a USCIS-approved civil surgeon. The sealed exam must accompany your application.",priority:"high"},
+    {icon:"✈️",title:"Get Advance Parole Before Traveling",description:"Do NOT leave the US after filing I-485 without an approved I-131. Departure may be treated as abandonment.",priority:"high"},
+    {icon:"📋",title:"Gather 3 Years of Residence Evidence",description:"Tax returns, pay stubs, lease agreements, bank statements proving continuous US residence.",priority:"high"},
+    {icon:"📅",title:"Monitor the Visa Bulletin Monthly",description:"Track your priority date on the USCIS Visa Bulletin if you have an employment-based petition.",priority:"medium"},
+  ],
+  naturalization:[
+    {icon:"📚",title:"Study All 100 Civics Questions",description:"Available at uscis.gov/citizenship. You must correctly answer 6 of 10 during your interview.",priority:"high"},
+    {icon:"📋",title:"Document Every International Trip",description:"List all trips outside the US for 5 years with exact dates. Absences over 6 months can break continuous residence.",priority:"high"},
+    {icon:"💰",title:"Confirm Tax Compliance",description:"File and pay all federal taxes before your interview. The officer will ask about tax compliance directly.",priority:"high"},
+    {icon:"⚖️",title:"Disclose All Criminal History",description:"Even arrests without conviction must be disclosed. Have an immigration attorney review your record before filing.",priority:"high"},
+  ],
+  asylum:[
+    {icon:"⚖️",title:"Hire an Immigration Attorney Immediately",description:"Asylum cases are highly fact-specific. Legal representation dramatically increases approval rates.",priority:"high"},
+    {icon:"📅",title:"File Within One Year of Arrival",description:"The 1-year deadline is a near-absolute bar. File even if your evidence is incomplete — supplement later.",priority:"high"},
+    {icon:"📝",title:"Gather Persecution Evidence",description:"Police reports, medical records, photos, country-conditions reports, and witness statements.",priority:"high"},
+    {icon:"🔒",title:"Protect Case Confidentiality",description:"Do not post about your case online. USCIS cannot contact your home country government about your case.",priority:"high"},
+  ],
+  will_trust:[
+    {icon:"⚖️",title:"Have an Estate Attorney Review",description:"A single ambiguous clause can trigger costly probate disputes or unintended tax consequences.",priority:"high"},
+    {icon:"👤",title:"Update Beneficiary Designations Separately",description:"Retirement accounts and life insurance pass by beneficiary designation — they override the will.",priority:"high"},
+    {icon:"📅",title:"Revisit After Every Major Life Event",description:"Marriage, divorce, birth of a child, or large inheritance should trigger an immediate will review.",priority:"high"},
+    {icon:"🔒",title:"Store Safely and Brief Your Executor",description:"Keep the original in a fireproof safe or with your attorney. Your executor must know where to find it.",priority:"medium"},
+  ],
+  power_of_attorney:[
+    {icon:"⚠️",title:"Know Whether It's Immediate or Springing",description:"An immediate POA is active now. A springing POA only activates upon certified incapacity.",priority:"high"},
+    {icon:"🔍",title:"Verify the Scope of Powers Granted",description:"Check whether the POA covers finances, healthcare, or both — and any dollar limits on transactions.",priority:"high"},
+    {icon:"📋",title:"Notify Financial Institutions",description:"Banks may require their own POA form or refuse forms older than 12 months.",priority:"medium"},
+    {icon:"⚖️",title:"Consult an Elder Law Attorney",description:"Especially important for aging parents. A poorly drafted POA can enable financial abuse.",priority:"medium"},
+  ],
+  eviction_notice:[
+    {icon:"⚖️",title:"Contact a Tenant Rights Attorney Today",description:"You have only 3–14 days depending on your state. Free legal aid is available at lawhelp.org.",priority:"high"},
+    {icon:"💰",title:"Pay in Full or Respond Before the Deadline",description:"Paying the full amount owed within the notice period stops the eviction. Always get a signed receipt.",priority:"high"},
+    {icon:"🛡️",title:"Check for Habitability or Retaliation Defenses",description:"Failure to repair or retaliatory eviction can be raised as defenses in court.",priority:"high"},
+    {icon:"📋",title:"Gather Your Payment Records",description:"Bank statements, money order stubs, and written communications with your landlord.",priority:"medium"},
+  ],
+  tax_form:[
+    {icon:"✅",title:"Verify All Boxes Match Your Records",description:"Check your name, SSN, employer EIN, and wage amounts. Request a W-2c for any errors.",priority:"high"},
+    {icon:"📊",title:"Cross-Check Against Your Pay Stubs",description:"Box 1 wages should equal annual gross pay minus pre-tax deductions (401k, health insurance, FSA, HSA).",priority:"high"},
+    {icon:"💰",title:"Claim Excess Social Security Tax",description:"If you had multiple employers and combined wages exceeded $168,600, claim the overpayment credit on Form 1040.",priority:"medium"},
+    {icon:"📅",title:"File or Extend by April 15",description:"Form 4868 gives an automatic 6-month extension to file (interest accrues on unpaid taxes).",priority:"medium"},
+  ],
+  general:[
+    {icon:"⚖️",title:"Consult a Licensed Attorney",description:"Before signing or acting on this document, have a qualified attorney in the relevant area review it.",priority:"high"},
+    {icon:"📋",title:"List Every Obligation and Deadline",description:"Extract every date, payment, and requirement and calendar them immediately.",priority:"high"},
+    {icon:"🔍",title:"Check for Auto-Renewal Provisions",description:"Many contracts renew automatically unless you give written notice 30–60 days before expiration.",priority:"medium"},
+    {icon:"📝",title:"Keep a Fully Executed Copy",description:"Store a signed copy of every legal document in a secure, accessible location.",priority:"medium"},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const S = {
+  apiKey: 'YOUR_API_KEY_HERE',
+  user: null,
+  fileText: '',
+  fileName: '',
+  docClass: 'general',
+  chatHistory: [],
+  lastAnalysis: null,
+};
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+function init(){
+  // Restore user session
+  try { S.user = JSON.parse(localStorage.getItem('lx_user')); } catch{}
+  if(S.user) renderLoggedIn();
+
+  // Wire tabs
+  document.querySelectorAll('.nav-tab').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
+
+  setupFileUpload();
+  setupAnalyzeBtn();
+  setupAuth();
+  renderLibrary();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════════
+function goTab(id){
+  document.querySelectorAll('.tpage').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id)?.classList.add('active');
+  document.querySelector(`.nav-tab[data-tab="${id}"]`)?.classList.add('active');
+  if(id==='dashboard') renderDashboard();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+function setupAuth(){
+  document.getElementById('loginBtn').onclick = () => openAuth('login');
+  document.getElementById('signupBtn').onclick = () => openAuth('signup');
+  document.getElementById('doLogin').onclick = doLogin;
+  document.getElementById('doSignup').onclick = doSignup;
+  // Enter key
+  ['liEmail','liPwd'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); }));
+  ['suName','suEmail','suPwd'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') doSignup(); }));
+}
+function openAuth(m){ document.getElementById('authModal').classList.add('open'); setMode(m); }
+function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
+function setMode(m){
+  const isL = m==='login';
+  document.getElementById('mTitle').textContent = isL ? 'Welcome Back' : 'Create Account';
+  document.getElementById('mSub').textContent = isL ? 'Sign in to save your analysis history.' : 'Free forever. No credit card needed.';
+  document.getElementById('loginForm').style.display = isL ? '' : 'none';
+  document.getElementById('signupForm').style.display = isL ? 'none' : '';
+}
+function doLogin(){
+  const email = document.getElementById('liEmail').value.trim().toLowerCase();
+  const pwd   = document.getElementById('liPwd').value;
+  const accs  = JSON.parse(localStorage.getItem('lx_accs')||'{}');
+  if(!accs[email] || accs[email].pwd !== btoa(pwd)){ showErr('liErr','Invalid email or password.'); return; }
+  S.user = {name: accs[email].name, email};
+  localStorage.setItem('lx_user', JSON.stringify(S.user));
+  closeAuth(); renderLoggedIn();
+  toast('Welcome back, '+S.user.name.split(' ')[0]+'! 👋', 'green');
+}
+function doSignup(){
+  const name  = document.getElementById('suName').value.trim();
+  const email = document.getElementById('suEmail').value.trim().toLowerCase();
+  const pwd   = document.getElementById('suPwd').value;
+  if(!name||!email||!pwd){ showErr('suErr','All fields are required.'); return; }
+  if(pwd.length < 6){ showErr('suErr','Password must be at least 6 characters.'); return; }
+  const accs = JSON.parse(localStorage.getItem('lx_accs')||'{}');
+  if(accs[email]){ showErr('suErr','Email already registered. Sign in instead.'); return; }
+  accs[email] = {name, pwd: btoa(pwd)};
+  localStorage.setItem('lx_accs', JSON.stringify(accs));
+  S.user = {name, email};
+  localStorage.setItem('lx_user', JSON.stringify(S.user));
+  closeAuth(); renderLoggedIn();
+  toast('Account created! Welcome, '+name.split(' ')[0]+'! 🎉', 'green');
+}
+function showErr(id, msg){ const e = document.getElementById(id); e.textContent=msg; e.style.display=msg?'block':'none'; }
+function doLogout(){
+  S.user = null; localStorage.removeItem('lx_user');
+  document.getElementById('navRight').innerHTML = `
+    <button class="nbtn nbtn-ghost" id="loginBtn">Log In</button>
+    <button class="nbtn nbtn-gold" id="signupBtn">Sign Up Free</button>`;
+  document.getElementById('loginBtn').onclick = () => openAuth('login');
+  document.getElementById('signupBtn').onclick = () => openAuth('signup');
+  goTab('home'); toast('Logged out.', '');
+}
+function renderLoggedIn(){
+  const init = S.user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('navRight').innerHTML = `
+    <div class="uchip" tabindex="0">
+      <div class="uav">${init}</div>
+      <span class="utxt">${esc(S.user.name.split(' ')[0])}</span>
+      <div class="umenu">
+        <div class="uminfo"><div class="umname">${esc(S.user.name)}</div><div class="umemail">${esc(S.user.email)}</div></div>
+        <div class="umitem" onclick="goTab('dashboard')">📊 My Dashboard</div>
+        <div class="umitem" onclick="goTab('analyze')">⚖️ New Analysis</div>
+        <div class="umitem red" onclick="doLogout()">🚪 Log Out</div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════
+function setupFileUpload(){
+  const dz = document.getElementById('dropZone');
+  const fi = document.getElementById('fileInput');
+  fi.addEventListener('change', e => { if(e.target.files[0]) loadFile(e.target.files[0]); });
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag');
+    if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+  });
+}
+
+function loadFile(f){
+  S.fileName = f.name;
+  S.fileText = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.fileText = e.target.result;
+    renderFileList();
+    document.getElementById('analyzeBtn').disabled = false;
+  };
+  // For text files read as text, for others as text too (works for txt/doc; PDF needs backend ideally)
+  reader.readAsText(f);
+}
+
+function renderFileList(){
+  const fl = document.getElementById('fileList');
+  fl.innerHTML = '';
+  if(!S.fileName) return;
+  const d = document.createElement('div'); d.className = 'fitem';
+  d.innerHTML = `<span>📄</span><span class="fin">${esc(S.fileName)}</span><span class="fsz">${S.fileText.length > 0 ? (S.fileText.length/1000).toFixed(0)+'k chars' : 'loading…'}</span><button class="frm">✕</button>`;
+  d.querySelector('.frm').onclick = () => { S.fileText=''; S.fileName=''; fl.innerHTML=''; document.getElementById('analyzeBtn').disabled=true; };
+  fl.appendChild(d);
+}
+
+function getOpts(){
+  const o = {};
+  document.querySelectorAll('.olist input[type=checkbox]').forEach(cb => { o[cb.dataset.key] = cb.checked; });
+  return o;
+}
+
+// ═══════════════════════════════════════════════════════
+//  ANALYZE
+// ═══════════════════════════════════════════════════════
+function setupAnalyzeBtn(){
+  document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+}
+
+async function runAnalysis(){
+  if(!S.fileText){ toast('Please upload a document first.', 'red'); return; }
+
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('btnTxt').textContent = 'Analyzing…';
+  S.chatHistory = [];
+  showLoading();
+
+  try{
+    // Step 1: Classify
+    const docClass = classifyDocument(S.fileText);
+    S.docClass = docClass;
+
+    // Step 2: Retrieve relevant corpus context
+    const ctxChunks = retrieveContext(S.fileText, docClass, 5);
+
+    // Step 3: Analyze
+    const opts = getOpts();
+    const result = await callClaude(S.fileText, docClass, ctxChunks, opts);
+    S.lastAnalysis = result;
+
+    // Save history
+    saveHistory(result);
+    renderResults(result, opts);
+  } catch(err){
+    showError(err.message);
+  } finally {
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('btnTxt').textContent = 'Re-Analyze';
+    document.getElementById('btnIcon').textContent = '🔄';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLASSIFICATION (keyword-based, client-side)
+// ═══════════════════════════════════════════════════════
+const CLASS_KW = {
+  federal_bill:["h.r.","be it enacted","reconciliation","sec.","title i","title ii","appropriates","house of representatives"],
+  executive_order:["executive order","by the authority vested in me as president","presidential memorandum"],
+  court_ruling:["plaintiff","defendant","appellant","appellee","hereby ordered","opinion","dissent","judgment"],
+  nda:["non-disclosure","confidentiality agreement","nda","proprietary information","confidential information"],
+  employment_contract:["employment agreement","offer letter","at-will","base salary","severance","non-compete"],
+  lease:["lease agreement","landlord","tenant","monthly rent","security deposit","lessee","lessor"],
+  terms_of_service:["terms of service","terms and conditions","privacy policy","by using this","user agreement"],
+  i485:["i-485","adjustment of status","form i-485","lawful permanent resident"],
+  naturalization:["n-400","naturalization","oath of allegiance","form n-400"],
+  asylum:["i-589","asylum","withholding of removal","persecution","form i-589"],
+  will_trust:["last will and testament","trust agreement","testator","executor","trustee","bequest"],
+  power_of_attorney:["power of attorney","attorney-in-fact","principal","durable power"],
+  eviction_notice:["notice to pay rent","unlawful detainer","notice to quit","3-day notice","three-day notice"],
+  tax_form:["w-2","form 1040","1099","internal revenue service","federal income tax withheld"],
+  mortgage:["mortgage","deed of trust","promissory note","lender","borrower","foreclosure"],
+  federal_act:["public law","u.s.c.","united states code","codified at","stat."],
+  insurance_policy:["insurance policy","policyholder","premium","deductible","coverage","insurer"],
+};
+
+function classifyDocument(text){
+  const tl = text.slice(0,4000).toLowerCase();
+  const scores = {};
+  for(const [cls, kws] of Object.entries(CLASS_KW)){
+    const s = kws.filter(kw => tl.includes(kw)).length;
+    if(s) scores[cls] = s;
+  }
+  if(Object.keys(scores).length){
+    const best = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
+    if(best[1] >= 2) return best[0];
+  }
+  return 'general';
+}
+
+// ═══════════════════════════════════════════════════════
+//  RETRIEVAL (TF-IDF style, client-side)
+// ═══════════════════════════════════════════════════════
+const STOP = new Set(["the","and","for","that","this","with","are","not","its","has","shall","will","may","been","have","from","any","all","such","each","said","upon","under","within","thereof","herein","pursuant","section","article"]);
+
+function tokenize(text){ return text.toLowerCase().match(/\b[a-z]{3,}\b/g)?.filter(w => !STOP.has(w)) || []; }
+
+function retrieveContext(docText, docClass, topK = 5){
+  const qWords = new Set(tokenize(docText.slice(0, 3000)));
+  const scored = [];
+
+  for(const doc of CORPUS){
+    const boost = doc.doc_class === docClass ? 2.0 : 1.0;
+    // Chunk the corpus doc text
+    const words = doc.text.split(/\s+/);
+    const size = 400, overlap = 60;
+    for(let i = 0; i < words.length; i += size - overlap){
+      const chunk = words.slice(i, i + size).join(' ');
+      const cWords = tokenize(chunk);
+      const cSet = new Set(cWords);
+      const ov = [...qWords].filter(w => cSet.has(w)).length;
+      if(ov > 0){
+        const score = (ov / Math.sqrt(cWords.length)) * boost;
+        scored.push({score, chunk});
+      }
+    }
+  }
+
+  scored.sort((a,b) => b.score - a.score);
+  const seen = new Set(), out = [];
+  for(const {chunk} of scored){
+    const sig = chunk.slice(0,60);
+    if(!seen.has(sig)){
+      seen.add(sig); out.push(chunk);
+      if(out.length >= topK) break;
+    }
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CALL CLAUDE (directly from browser)
+// ═══════════════════════════════════════════════════════
+const DOC_LABELS = {
+  federal_bill:"Federal Bill or Proposed Legislation",federal_act:"Federal Act / Enacted Law",
+  executive_order:"Executive Order",nda:"Non-Disclosure Agreement",
+  employment_contract:"Employment Contract",lease:"Lease or Rental Agreement",
+  i485:"I-485 Adjustment of Status (Green Card)",naturalization:"N-400 Naturalization Application",
+  asylum:"I-589 Asylum Application",will_trust:"Will or Trust Document",
+  power_of_attorney:"Power of Attorney",eviction_notice:"Eviction Notice",
+  tax_form:"Tax Form (W-2/1040/1099)",mortgage:"Mortgage / Deed of Trust",
+  insurance_policy:"Insurance Policy",terms_of_service:"Terms of Service / Privacy Policy",
+  federal_regulation:"Federal Regulation",court_ruling:"Court Ruling",general:"Legal Document",
+};
+
+async function callClaude(docText, docClass, ctxChunks, opts){
+  const label = DOC_LABELS[docClass] || 'Legal Document';
+  const context = ctxChunks.slice(0,4).join('\n\n---\n\n');
+
+  const MAX = 20000;
+  const excerpt = docText.length > MAX
+    ? docText.slice(0, 17000) + '\n\n[...middle omitted...]\n\n' + docText.slice(-3000)
+    : docText;
+
+  const specs = [];
+  if(opts.summary)    specs.push('"executive_summary": 4-6 sentences describing ONLY what this specific document says. Name actual parties, dollar figures, dates, programs. No generic boilerplate.');
+  if(opts.keypoints)  specs.push('"key_points": array of 6-8 objects {point:<60chars, detail:<180chars}. Each must cite a SPECIFIC provision with actual numbers, dates, names, or thresholds from the document. No generic observations.');
+  if(opts.risks)      specs.push('"risk_assessment": array of 5-6 objects {area:<50chars, level:"low"|"medium"|"high", description:<180chars}. Each risk must reference a specific clause, dollar amount, deadline, or party in the document.');
+  if(opts.nuances)    specs.push('"legal_nuances": array of 5-6 objects {tag:<40chars ALL CAPS, detail:<200chars}. NON-OBVIOUS provisions a non-lawyer would miss: hidden triggers, unusual definitions, carve-outs, auto-renewals, clawbacks. Must NOT duplicate key_points.');
+
+  const system = `You are an expert legal analyst for ${label} documents with access to retrieved legal corpus context.
+RULES: Be SPECIFIC — cite actual provisions, real numbers, named parties, exact thresholds from the document. No generic boilerplate. Every sentence must be grounded in the actual document text. Return ONLY valid complete JSON — no markdown, no text outside braces. All string values under 210 characters.`;
+
+  const user = `DOCUMENT TYPE: ${label}
+
+=== RETRIEVED LEGAL CORPUS CONTEXT ===
+${context.slice(0,2500) || 'None.'}
+
+=== DOCUMENT TO ANALYZE ===
+${excerpt}
+
+=== RETURN THIS JSON OBJECT ===
+"doc_title": specific title for this document (<70 chars)
+"doc_type": "${label}"
+"doc_class": "${docClass}"
+${specs.join('\n')}
+
+REMINDER: Cite ACTUAL content. If the doc mentions $3.8T deficit, say that. If it says 80 hrs/month, say that. Complete all arrays fully before closing JSON.`;
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': S.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system,
+      messages: [{ role: 'user', content: user }],
+    }),
+  });
+
+  if(!resp.ok){
+    const err = await resp.json().catch(()=>({}));
+    throw new Error(err.error?.message || `API error ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const raw = data.content?.map(b => b.text||'').join('') || '';
+  const result = parseJSON(raw);
+
+  // Inject pre-built suggested actions
+  if(opts.actions){
+    result.suggested_actions = ACTIONS[docClass] || ACTIONS.general;
+  }
+  result.doc_class = docClass;
+  result.doc_type = result.doc_type || label;
+  return result;
+}
+
+async function chatCall(question){
+  const label = DOC_LABELS[S.docClass] || 'Legal Document';
+  const ctxChunks = retrieveContext(question + ' ' + S.fileText.slice(0,400), S.docClass, 3);
+  const ctx = ctxChunks.slice(0,2).join('\n\n');
+
+  const system = `You are LexisAI, an expert legal assistant. You analyzed a ${label}.
+ANALYSIS: ${JSON.stringify(S.lastAnalysis||{}).slice(0,1800)}
+DOCUMENT: ${S.fileText.slice(0,4500)}
+CORPUS CONTEXT: ${ctx.slice(0,1000)}
+Answer based ONLY on this document. Be concise (2-4 sentences). Cite specific provisions. Note you are not a licensed attorney.`;
+
+  const msgs = S.chatHistory.slice(-6).concat([{role:'user',content:question}]);
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': S.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages:msgs}),
+  });
+  const data = await resp.json();
+  return data.content?.map(b=>b.text||'').join('') || 'No response.';
+}
+
+// ═══════════════════════════════════════════════════════
+//  JSON PARSER (robust healer)
+// ═══════════════════════════════════════════════════════
+function parseJSON(raw){
+  let text = raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+  try{ return JSON.parse(text); } catch(_){}
+  const start = text.indexOf('{');
+  if(start === -1) return {};
+  let depth=0, end=-1;
+  for(let i=start;i<text.length;i++){
+    if(text[i]==='{') depth++;
+    else if(text[i]==='}'){depth--; if(depth===0){end=i;break;}}
+  }
+  if(end!==-1){ try{ return JSON.parse(text.slice(start,end+1)); }catch(_){} }
+  let s = (end===-1 ? text.slice(start) : text.slice(start,end+1)).trimEnd();
+  s = s.replace(/,?\s*"[^"]*$/,'').trimEnd().replace(/,\s*$/,'');
+  let opens=0,arr=0,inStr=false,esc=false;
+  for(const ch of s){
+    if(esc){esc=false;continue} if(ch==='\\'){ esc=true;continue }
+    if(ch==='"'){inStr=!inStr;continue} if(inStr) continue;
+    if(ch==='{')opens++; else if(ch==='}')opens--;
+    else if(ch==='[')arr++; else if(ch===']')arr--;
+  }
+  for(let i=0;i<Math.max(0,arr);i++) s+=']';
+  for(let i=0;i<Math.max(0,opens);i++) s+='}';
+  try{ return JSON.parse(s); } catch(_){ return {}; }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOADING UI
+// ═══════════════════════════════════════════════════════
+function showLoading(){
+  document.getElementById('rcol').innerHTML = `
+    <div class="lwrap">
+      <div class="spin"></div>
+      <p style="color:var(--text2);font-size:.84rem">Running RAG pipeline…</p>
+      <div class="lsteps">
+        <div class="ls active" id="ls0">🔎 Classifying document type</div>
+        <div class="ls" id="ls1">📖 Retrieving legal corpus context</div>
+        <div class="ls" id="ls2">⚖️ Grounding analysis in provisions</div>
+        <div class="ls" id="ls3">⚠️ Detecting risks & nuances</div>
+        <div class="ls" id="ls4">✍️ Composing structured summary</div>
+      </div>
+    </div>`;
+  let i=0;
+  const iv = setInterval(()=>{
+    const prev = document.getElementById('ls'+(i-1));
+    if(prev){ prev.classList.remove('active'); prev.classList.add('done'); }
+    const cur = document.getElementById('ls'+i);
+    if(cur) cur.classList.add('active');
+    if(i>=4) clearInterval(iv); else i++;
+  }, 1400);
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER RESULTS
+// ═══════════════════════════════════════════════════════
+function renderResults(data, opts){
+  let html = `
+    <div class="rmeta">
+      <h2>Analysis Results</h2>
+      <div style="display:flex;gap:.38rem;flex-wrap:wrap;align-items:center">
+        ${data.doc_type ? `<span class="tag tgold">${esc(data.doc_type)}</span>` : ''}
+        <span class="tag tg">🕐 Just now</span>
+        <span class="rbadge">🧠 RAG-grounded</span>
+      </div>
+    </div>
+    <div class="dcinfo">📂 Classified as: <strong>${esc(data.doc_type||'Legal Document')}</strong> — analysis grounded in retrieved legal corpus</div>`;
+
+  if(opts.summary && data.executive_summary){
+    html += `<div class="rcard"><div class="rch">📋 Executive Summary</div><div class="rcb"><p class="etext">${esc(data.executive_summary)}</p></div></div>`;
+  }
+
+  if(opts.keypoints && data.key_points?.length){
+    const items = data.key_points.map((k,i)=>`<li class="kpi"><span class="kpn">${i+1}</span><div><strong>${esc(k.point)}</strong><br/><span style="color:var(--text2);font-size:.77rem">${esc(k.detail)}</span></div></li>`).join('');
+    html += `<div class="rcard"><div class="rch">📌 Key Provisions & Obligations</div><div class="rcb"><ul class="kpl">${items}</ul></div></div>`;
+  }
+
+  if(opts.risks && data.risk_assessment?.length){
+    const items = data.risk_assessment.map(r=>{
+      const rc = r.level==='high'?'rh':r.level==='medium'?'rm':'rl';
+      const bc = r.level==='high'?'bh':r.level==='medium'?'bm':'bl';
+      return `<div class="ri ${rc}"><div class="rih"><span class="ril">${esc(r.area)}</span><span class="bd ${bc}">${(r.level||'').toUpperCase()}</span></div><div class="rid">${esc(r.description)}</div></div>`;
+    }).join('');
+    html += `<div class="rcard"><div class="rch">⚠️ Risk Assessment</div><div class="rcb"><div class="rgrid">${items}</div></div></div>`;
+  }
+
+  if(opts.nuances && data.legal_nuances?.length){
+    const items = data.legal_nuances.map(n=>`<div class="nui"><div class="nut">${esc(n.tag)}</div><div style="color:var(--text2);font-size:.79rem">${esc(n.detail)}</div></div>`).join('');
+    html += `<div class="rcard"><div class="rch">🔍 Legal Nuances & Red Flags</div><div class="rcb"><div class="nul">${items}</div></div></div>`;
+  }
+
+  if(opts.actions && data.suggested_actions?.length){
+    const items = data.suggested_actions.map(a=>{
+      const pc = a.priority==='high'?'ph-h':a.priority==='medium'?'pm-m':'pl-l';
+      return `<div class="aci"><div class="acion">${esc(a.icon||'📋')}</div><div class="acbd"><div class="act">${esc(a.title)}</div><div class="acd">${esc(a.description)}</div></div><span class="acp ${pc}">${(a.priority||'').toUpperCase()}</span></div>`;
+    }).join('');
+    html += `<div class="rcard"><div class="rch">🗺️ Suggested Actions</div><div class="rcb"><div class="acl">${items}</div></div></div>`;
+  }
+
+  if(opts.chat){
+    html += `<div class="rcard cwrap"><div class="rch">💬 Ask Questions About This Document</div>
+      <div class="cmsgs" id="chatMsgs">
+        <div class="cm cai"><div class="cav">⚖</div><div class="cbub">I've analyzed your document. Ask anything — "What are the work requirements?", "What's the penalty for breach?", "When does this expire?"</div></div>
+      </div>
+      <div class="cfoot">
+        <input class="cin" id="chatIn" type="text" placeholder="Ask about this specific document…"/>
+        <button class="csnd" id="chatSend">➤</button>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('rcol').innerHTML = html;
+  if(opts.chat) setupChat();
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════════════
+function setupChat(){
+  const inp = document.getElementById('chatIn');
+  const btn = document.getElementById('chatSend');
+  const msgs = document.getElementById('chatMsgs');
+
+  async function send(){
+    const q = inp.value.trim(); if(!q) return;
+    inp.value=''; btn.disabled=true;
+    appendMsg('user', q);
+    S.chatHistory.push({role:'user',content:q});
+    const bub = appendMsg('ai', '…');
+    try{
+      const reply = await chatCall(q);
+      bub.textContent = reply;
+      S.chatHistory.push({role:'assistant',content:reply});
+    }catch(e){ bub.textContent='Error: '+e.message; }
+    btn.disabled = false;
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function appendMsg(role, text){
+    const d = document.createElement('div');
+    d.className = `cm c${role==='ai'?'ai':'usr'}`;
+    d.innerHTML = `<div class="cav">${role==='ai'?'⚖':'👤'}</div><div class="cbub">${esc(text)}</div>`;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d.querySelector('.cbub');
+  }
+
+  btn.addEventListener('click', send);
+  inp.addEventListener('keydown', e => { if(e.key==='Enter') send(); });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LIBRARY
+// ═══════════════════════════════════════════════════════
+const LIB_CATS = ['all','bill','act','immigration','contract','personal','exec'];
+
+function renderLibrary(){
+  // Build filters
+  const fEl = document.getElementById('libFilters');
+  if(!fEl.children.length){
+    LIB_CATS.forEach(cat => {
+      const b = document.createElement('button');
+      b.className = 'libf' + (cat==='all'?' active':'');
+      b.dataset.cat = cat;
+      b.textContent = cat==='all'?'All':cat.charAt(0).toUpperCase()+cat.slice(1);
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.libf').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderLibGrid(cat);
+      });
+      fEl.appendChild(b);
+    });
+  }
+  renderLibGrid('all');
+}
+
+function renderLibGrid(filter){
+  const docs = filter==='all' ? CORPUS : CORPUS.filter(d=>d.category===filter);
+  const grid = document.getElementById('libGrid');
+  if(!docs.length){ grid.innerHTML='<div style="color:var(--text2);font-size:.85rem;padding:1rem">No documents in this category.</div>'; return; }
+  grid.innerHTML = docs.map(d=>`
+    <div class="lc" onclick="loadLibDoc('${d.id}')">
+      <div class="lct">
+        <div class="lbdg lb-${d.badge}">${d.badge}</div>
+        <h3>${esc(d.title)}</h3>
+        <div class="lcdate">${esc(d.date)}</div>
+      </div>
+      <div class="lcb"><p class="lcexc">${esc(d.text.slice(0,260))}</p></div>
+      <div class="lcf">
+        <span class="lftags">${esc(d.tags)}</span>
+        <span class="lfact">Analyze →</span>
+      </div>
+    </div>`).join('');
+}
+
+function loadLibDoc(id){
+  const doc = CORPUS.find(d=>d.id===id);
+  if(!doc) return;
+  S.fileText = doc.text;
+  S.fileName = doc.title + ' (Library)';
+  goTab('analyze');
+  renderFileList();
+  document.getElementById('analyzeBtn').disabled = false;
+  toast('Loaded: '+doc.title, 'green');
+}
+
+// ═══════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════
+function saveHistory(result){
+  if(!S.user) return;
+  const key = 'lx_hist_'+S.user.email;
+  const h = JSON.parse(localStorage.getItem(key)||'[]');
+  h.unshift({doc_title: result.doc_title||'Untitled', doc_type: result.doc_type||'Document', date: new Date().toLocaleDateString()});
+  localStorage.setItem(key, JSON.stringify(h.slice(0,30)));
+}
+
+function renderDashboard(){
+  const el = document.getElementById('dashContent');
+  if(!S.user){
+    el.innerHTML=`<div class="lockmsg"><div class="li">🔒</div><strong>Sign in to view your Dashboard</strong><p style="font-size:.83rem;margin-top:.3rem">Track your history, saved documents, and usage.</p><button class="hbtn hbtn-p" style="margin-top:.75rem" onclick="openAuth('login')">Sign In</button></div>`;
+    return;
+  }
+  const key = 'lx_hist_'+S.user.email;
+  const h = JSON.parse(localStorage.getItem(key)||'[]');
+  el.innerHTML = `
+    <div class="dshh"><h1>Welcome back, ${esc(S.user.name.split(' ')[0])} 👋</h1><p>Your legal intelligence overview.</p></div>
+    <div class="dsts">
+      <div class="dst"><div class="dsl">Docs Analyzed</div><div class="dsv">${h.length}</div><div class="dss">Total saved</div></div>
+      <div class="dst"><div class="dsl">Plan</div><div class="dsv" style="font-size:1.3rem;padding-top:.3rem">Free</div><div class="dss"><span style="color:var(--gold);cursor:pointer">Upgrade →</span></div></div>
+      <div class="dst"><div class="dsl">Last Analysis</div><div class="dsv" style="font-size:1rem;padding-top:.45rem">${h[0]?.date||'—'}</div><div class="dss">${esc(h[0]?.doc_type||'')}</div></div>
+      <div class="dst"><div class="dsl">Corpus Docs</div><div class="dsv">${CORPUS.length}</div><div class="dss">In RAG knowledge base</div></div>
+    </div>
+    <div class="dtwo">
+      <div class="dp">
+        <div class="dph">Recent Analyses</div>
+        <div class="dpb">${h.length===0?`<p style="font-size:.81rem;color:var(--text2)">No analyses yet. <span style="color:var(--gold);cursor:pointer" onclick="goTab('analyze')">Analyze your first document →</span></p>`:h.slice(0,8).map(x=>`<div class="hrow"><div class="hico">📄</div><div class="hnm">${esc(x.doc_title)}</div><div class="hdt">${esc(x.date)}</div></div>`).join('')}</div>
+      </div>
+      <div class="dp">
+        <div class="dph">Quick Actions</div>
+        <div class="dpb"><div class="acl">
+          <div class="aci" onclick="goTab('analyze')" style="cursor:pointer"><div class="acion">⚖️</div><div class="acbd"><div class="act">Analyze a New Document</div><div class="acd">Upload a contract, bill, or immigration form</div></div></div>
+          <div class="aci" onclick="goTab('library')" style="cursor:pointer"><div class="acion">📚</div><div class="acbd"><div class="act">Browse Document Library</div><div class="acd">Pre-loaded legislation and legal forms</div></div></div>
+        </div></div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function showError(msg){
+  document.getElementById('rcol').innerHTML=`
+    <div class="estate"><div class="esico">❌</div><div class="esttl">Analysis Failed</div><p class="essub" style="color:var(--text2)">${esc(msg)}</p><p style="font-size:.76rem;color:var(--text3);margin-top:.5rem">Check your API key, then try again.</p></div>`;
+}
+
+let _toastTimer;
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type==='green'?' green':type==='red'?' red':'');
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+function esc(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>
