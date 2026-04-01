@@ -1,6 +1,6 @@
-# LexisAI — GitHub Pages Deployment Guide
+# LegalBuddy — GitHub Pages Deployment Guide
 
-This is the **static version** of LexisAI — everything runs in the browser.  
+This is the **static version** of LegalBuddy — everything runs in the browser.  
 No Python, no server, no hosting fees. Just push to GitHub and it's live.
 
 ---
