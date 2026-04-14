@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LexisAI — Legal Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0c10;--surface:#13151c;--surface2:#1b1e28;--border:#2a2d3a;--border2:#383c4d;
+  --gold:#c9a84c;--gold-lt:#e8cb7c;--gold-dk:#8a6520;
+  --text:#e8e4dc;--text2:#9a9589;--text3:#5a5650;
+  --red:#e05c5c;--green:#4caf7d;--amber:#e0a84c;--blue:#5c8fe0;--purple:#9c6ee0;
+  --r:8px;--r2:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* NAV */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;background:rgba(11,12,16,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:.04em;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.nav-logo span{color:var(--gold)}
+.nav-tabs{display:flex;gap:.15rem;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{display:flex;align-items:center;gap:.35rem;padding:.38rem .8rem;border-radius:6px;font-size:.77rem;font-weight:500;color:var(--text2);cursor:pointer;border:none;background:none;white-space:nowrap;transition:.2s;font-family:'Outfit',sans-serif}
+.nav-tab:hover{color:var(--text);background:var(--surface)}
+.nav-tab.active{color:var(--gold);background:rgba(201,168,76,.09)}
+.nav-right{display:flex;align-items:center;gap:.6rem;margin-left:auto;flex-shrink:0}
+.nbtn{padding:.36rem .85rem;border-radius:6px;font-size:.77rem;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;border:none;transition:.2s}
+.nbtn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.nbtn-ghost:hover{color:var(--text);border-color:var(--text3)}
+.nbtn-gold{background:var(--gold);color:#0b0c10;font-weight:600}
+.nbtn-gold:hover{background:var(--gold-lt)}
+.uchip{display:flex;align-items:center;gap:.45rem;cursor:pointer;padding:.28rem .5rem;border-radius:6px;position:relative}
+.uchip:hover{background:var(--surface2)}
+.uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dk),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#0b0c10}
+.utxt{font-size:.79rem;color:var(--text);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.umenu{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:.5rem;min-width:195px;display:none;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300}
+.uchip:hover .umenu,.uchip:focus-within .umenu{display:block}
+.uminfo{padding:.45rem .7rem;border-bottom:1px solid var(--border);margin-bottom:.3rem}
+.umname{font-size:.81rem;font-weight:600}.umemail{font-size:.69rem;color:var(--text2)}
+.umitem{padding:.46rem .7rem;border-radius:6px;font-size:.79rem;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:.45rem}
+.umitem:hover{background:var(--surface);color:var(--text)}
+.umitem.red:hover{color:var(--red)}
+
+/* HF KEY BANNER — hidden, replaced by modal */
+#hfBanner{display:none!important}
+
+/* API KEY MODAL */
+#apiKeyModal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center}
+#apiKeyModal.hidden{display:none}
+.akm-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:2.4rem 2rem;width:100%;max-width:440px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.7);animation:mIn .28s ease}
+.akm-icon{font-size:2.8rem;margin-bottom:.7rem}
+.akm-box h2{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:700;margin-bottom:.3rem}
+.akm-box p{font-size:.83rem;color:var(--text2);line-height:1.65;margin-bottom:1.4rem}
+.akm-input-row{display:flex;gap:.5rem;margin-bottom:.7rem}
+#apiKeyField{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:.65rem .9rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.86rem;outline:none;transition:.2s}
+#apiKeyField:focus{border-color:var(--gold)}
+#apiKeyField::placeholder{color:var(--text3)}
+#apiKeySave{padding:.65rem 1.2rem;background:var(--gold);color:#0b0c10;border:none;border-radius:var(--r);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.86rem;font-weight:700;white-space:nowrap;transition:.2s}
+#apiKeySave:hover{background:var(--gold-lt)}
+.akm-err{font-size:.75rem;color:var(--red);min-height:1rem;margin-bottom:.5rem}
+.akm-tip{font-size:.72rem;color:var(--text3);line-height:1.6}
+.akm-tip a{color:var(--gold);text-decoration:none}
+.akm-tip a:hover{text-decoration:underline}
+.akm-divider{display:flex;align-items:center;gap:.6rem;margin:.9rem 0;color:var(--text3);font-size:.72rem}
+.akm-divider::before,.akm-divider::after{content:'';flex:1;border-top:1px solid var(--border)}
+.akm-skip{font-size:.74rem;color:var(--text3);cursor:pointer;text-decoration:underline;display:block;margin-top:.5rem}
+.akm-skip:hover{color:var(--text2)}
+
+/* AUTH MODAL */
+.moverlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.moverlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:2rem;width:100%;max-width:400px;position:relative;animation:mIn .25s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mclose{position:absolute;top:.75rem;right:.75rem;background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.1rem}
+.mclose:hover{color:var(--text)}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:.2rem}
+.modal .msub{font-size:.81rem;color:var(--text2);margin-bottom:1.5rem}
+.fg{margin-bottom:.9rem}
+.fl{font-size:.72rem;font-weight:500;color:var(--text2);letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:.35rem}
+.fi{width:100%;padding:.62rem .85rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:.84rem;outline:none;transition:.2s}
+.fi:focus{border-color:var(--gold)}
+.fi::placeholder{color:var(--text3)}
+.fsub{width:100%;padding:.72rem;background:var(--gold);color:#0b0c10;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;margin-top:.4rem;transition:.2s}
+.fsub:hover{background:var(--gold-lt)}
+.fswitch{text-align:center;margin-top:.9rem;font-size:.79rem;color:var(--text2)}
+.fswitch a{color:var(--gold);cursor:pointer}
+.ferr{font-size:.75rem;color:var(--red);margin-top:.25rem;display:none}
+
+/* PAGE */
+#pageWrap{padding-top:58px}
+.tpage{display:none;animation:fadeUp .25s ease}
+.tpage.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;z-index:999;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:.65rem 1rem;font-size:.81rem;max-width:290px;box-shadow:0 8px 24px rgba(0,0,0,.55);transform:translateY(18px);opacity:0;transition:.3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.green{border-color:rgba(76,175,125,.4);color:var(--green)}
+.toast.red{border-color:rgba(224,92,92,.4);color:var(--red)}
+
+/* HOME */
+.hero{min-height:calc(100vh - 58px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1.5rem;position:relative;overflow:hidden}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;opacity:.18;mask-image:radial-gradient(ellipse 65% 65% at 50% 50%,black,transparent);pointer-events:none}
+.hbadge{display:inline-flex;align-items:center;gap:.4rem;border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:.28rem .85rem;border-radius:20px;font-size:.71rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.4rem;background:rgba(201,168,76,.06);position:relative}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,6vw,5rem);font-weight:700;line-height:1.1;margin-bottom:.9rem;position:relative}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hsub{font-size:clamp(.88rem,2vw,1.04rem);color:var(--text2);max-width:550px;margin:0 auto 2rem;line-height:1.8;position:relative}
+.hbtns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.8rem;position:relative}
+.hbtn{padding:.72rem 1.7rem;border-radius:var(--r);font-size:.88rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:.2s;border:none}
+.hbtn-p{background:var(--gold);color:#0b0c10}
+.hbtn-p:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.hbtn-o{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.hbtn-o:hover{border-color:var(--text2);transform:translateY(-1px)}
+.stats{display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap;padding:1.2rem 1.8rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);position:relative}
+.stat{text-align:center}
+.sn{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--gold-lt)}
+.sl{font-size:.69rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-top:.05rem}
+.features{padding:4rem 1.5rem;max-width:1100px;margin:0 auto}
+.slbl{font-size:.69rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.4rem}
+.sttl{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:700;margin-bottom:.5rem}
+.ssub{color:var(--text2);font-size:.87rem;line-height:1.7;max-width:480px;margin-bottom:2.2rem}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.9rem}
+.fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.4rem;transition:.25s}
+.fcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.ficon{font-size:1.75rem;margin-bottom:.65rem}
+.ftitle{font-weight:600;font-size:.9rem;margin-bottom:.3rem}
+.fdesc{font-size:.78rem;color:var(--text2);line-height:1.62}
+.ctasec{text-align:center;padding:3.5rem 1.5rem;background:linear-gradient(180deg,transparent,rgba(201,168,76,.04));border-top:1px solid var(--border)}
+.ctasec h2{font-family:'Cormorant Garamond',serif;font-size:2.3rem;margin-bottom:.7rem}
+.ctasec p{color:var(--text2);margin-bottom:1.8rem;font-size:.9rem}
+
+/* ANALYZE */
+.awrap{display:grid;grid-template-columns:305px 1fr;gap:0;max-width:1280px;margin:0 auto;padding:1.5rem;align-items:start}
+.lcol{display:flex;flex-direction:column;gap:.9rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.ph{padding:.58rem 1rem;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:.4rem}
+.pb{padding:.9rem}
+.uzone{border:2px dashed var(--border2);border-radius:var(--r);padding:1.35rem 1rem;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.uzone:hover,.uzone.drag{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.uzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uzi{font-size:1.9rem;margin-bottom:.4rem}
+.uzt{font-size:.78rem;color:var(--text2);line-height:1.5}
+.uzt strong{color:var(--gold)}
+.uzf{font-size:.66rem;color:var(--text3);margin-top:.22rem}
+.flist{display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem}
+.fitem{display:flex;align-items:center;gap:.45rem;padding:.46rem .6rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.75rem}
+.fin{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.fsz{color:var(--text2);font-size:.66rem;flex-shrink:0}
+.frm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.84rem;padding:0;line-height:1}
+.frm:hover{color:var(--red)}
+.olist{display:flex;flex-direction:column;gap:.28rem}
+.orow{display:flex;align-items:center;gap:.55rem;padding:.4rem .42rem;border-radius:6px;cursor:pointer;transition:.15s}
+.orow:hover{background:var(--surface2)}
+.orow input{accent-color:var(--gold);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.orow label{font-size:.78rem;cursor:pointer;flex:1}
+.bbtn{width:100%;padding:.76rem;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:.87rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.45rem;transition:.2s}
+.bgold{background:var(--gold);color:#0b0c10}
+.bgold:hover:not(:disabled){background:var(--gold-lt)}
+.bgold:disabled{opacity:.38;cursor:not-allowed}
+.disc{font-size:.66rem;color:var(--text3);line-height:1.6}
+.rcol{display:flex;flex-direction:column;gap:.9rem;padding-left:1.2rem}
+.estate{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:3.8rem 2rem;text-align:center;color:var(--text2)}
+.esico{font-size:3.2rem;margin-bottom:1.1rem;opacity:.28}
+.esttl{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:var(--text);margin-bottom:.45rem}
+.essub{font-size:.83rem;line-height:1.7;max-width:360px;margin:0 auto}
+
+/* LOADING */
+.lwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:2.8rem 2rem;text-align:center}
+.spin{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lsteps{margin-top:.9rem;display:flex;flex-direction:column;gap:.32rem}
+.ls{font-size:.76rem;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:.35rem;transition:.3s}
+.ls.active{color:var(--gold)}.ls.done{color:var(--green)}
+
+/* RESULT CARDS */
+.rmeta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.45rem}
+.rmeta h2{font-family:'Cormorant Garamond',serif;font-size:1.32rem}
+.rbadge{font-size:.65rem;padding:.22rem .6rem;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:.28rem;letter-spacing:.05em;background:rgba(92,143,224,.1);border:1px solid rgba(92,143,224,.2);color:var(--blue)}
+.tag{display:inline-flex;align-items:center;padding:.2rem .58rem;border-radius:20px;font-size:.65rem;font-weight:500;letter-spacing:.05em}
+.tg{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+.tgold{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.22);color:var(--gold)}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;animation:rise .32s ease forwards;opacity:0}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.rcard:nth-child(1){animation-delay:.04s}.rcard:nth-child(2){animation-delay:.09s}.rcard:nth-child(3){animation-delay:.15s}.rcard:nth-child(4){animation-delay:.21s}.rcard:nth-child(5){animation-delay:.27s}.rcard:nth-child(6){animation-delay:.33s}
+.rch{padding:.56rem 1rem;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.45rem;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.rcb{padding:.95rem 1.05rem}
+.etext{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;line-height:1.85;color:var(--text)}
+.kpl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.kpi{display:flex;gap:.58rem;padding:.52rem .68rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:6px;font-size:.8rem;line-height:1.58}
+.kpn{flex-shrink:0;width:19px;height:19px;background:var(--gold);color:#0b0c10;border-radius:50%;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.ri{padding:.6rem .7rem;border-radius:6px;border:1px solid var(--border);font-size:.76rem;background:var(--surface2)}
+.rih{display:flex;align-items:center;justify-content:space-between;margin-bottom:.22rem}
+.ril{font-weight:600;font-size:.78rem}
+.rid{color:var(--text2);font-size:.73rem;line-height:1.52}
+.rl{border-left:3px solid var(--green)}.rm{border-left:3px solid var(--amber)}.rh{border-left:3px solid var(--red)}
+.bd{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.07em}
+.bl{background:rgba(76,175,125,.14);color:var(--green)}.bm{background:rgba(224,168,76,.14);color:var(--amber)}.bh{background:rgba(224,92,92,.14);color:var(--red)}
+.nul{display:flex;flex-direction:column;gap:.45rem}
+.nui{padding:.6rem .73rem;border-radius:6px;background:rgba(156,110,224,.06);border:1px solid rgba(156,110,224,.17);font-size:.8rem;line-height:1.62}
+.nut{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:.2rem}
+.acl{display:flex;flex-direction:column;gap:.5rem}
+.aci{display:flex;gap:.65rem;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);align-items:flex-start;transition:.2s}
+.aci:hover{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.acion{font-size:1.22rem;flex-shrink:0;margin-top:1px}
+.acbd{flex:1}
+.act{font-weight:600;font-size:.83rem;margin-bottom:.16rem}
+.acd{font-size:.74rem;color:var(--text2);line-height:1.52}
+.acp{flex-shrink:0;font-size:.6rem;padding:2px 6px;border-radius:20px;font-weight:700}
+.ph-h{background:rgba(224,92,92,.14);color:var(--red)}.pm-m{background:rgba(224,168,76,.14);color:var(--amber)}.pl-l{background:rgba(76,175,125,.14);color:var(--green)}
+.dcinfo{font-size:.75rem;color:var(--text2);padding:.45rem .7rem;background:rgba(92,143,224,.06);border:1px solid rgba(92,143,224,.15);border-radius:6px;display:flex;align-items:center;gap:.38rem}
+
+/* CHAT */
+.cwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.cmsgs{padding:.9rem;display:flex;flex-direction:column;gap:.6rem;max-height:320px;overflow-y:auto}
+.cm{display:flex;gap:.5rem;font-size:.8rem;line-height:1.62}
+.cav{width:27px;height:27px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;margin-top:2px}
+.cai .cav{background:var(--gold);color:#0b0c10;font-weight:700}
+.cusr .cav{background:var(--surface2);border:1px solid var(--border);order:2;margin-left:auto}
+.cbub{max-width:87%;padding:.5rem .8rem;border-radius:10px;font-size:.8rem}
+.cai .cbub{background:var(--surface2);border:1px solid var(--border);border-radius:10px 10px 10px 2px}
+.cusr .cbub{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.18);border-radius:10px 10px 2px 10px}
+.cusr{flex-direction:row-reverse}
+.cfoot{display:flex;gap:.45rem;padding:.6rem .9rem;border-top:1px solid var(--border);background:rgba(255,255,255,.01)}
+.cin{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.4rem .95rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;outline:none;transition:.2s}
+.cin:focus{border-color:var(--gold)}
+.cin::placeholder{color:var(--text3)}
+.csnd{width:33px;height:33px;border-radius:50%;background:var(--gold);color:#0b0c10;border:none;cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.csnd:hover:not(:disabled){background:var(--gold-lt)}
+.csnd:disabled{opacity:.32;cursor:not-allowed}
+
+/* LIBRARY */
+.libpg{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+.libh h1{font-family:'Cormorant Garamond',serif;font-size:2.1rem;margin-bottom:.28rem}
+.libh p{color:var(--text2);font-size:.86rem;margin-bottom:1.4rem}
+.libfs{display:flex;gap:.4rem;margin-bottom:1.3rem;flex-wrap:wrap}
+.libf{padding:.3rem .8rem;border-radius:20px;font-size:.73rem;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif}
+.libf:hover,.libf.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
+.libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:.85rem}
+.lc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:.25s}
+.lc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.lct{padding:1.05rem 1.1rem .75rem;border-bottom:1px solid var(--border)}
+.lbdg{display:inline-block;padding:.17rem .56rem;border-radius:20px;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.55rem}
+.lb-bill{background:rgba(92,143,224,.12);color:var(--blue)}
+.lb-act{background:rgba(76,175,125,.12);color:var(--green)}
+.lb-exec{background:rgba(224,168,76,.12);color:var(--amber)}
+.lb-contract{background:rgba(201,168,76,.12);color:var(--gold)}
+.lb-immigration{background:rgba(92,143,224,.12);color:var(--blue)}
+.lb-personal{background:rgba(156,110,224,.12);color:var(--purple)}
+.lc h3{font-family:'Cormorant Garamond',serif;font-size:1.06rem;font-weight:600;line-height:1.32;margin-bottom:.3rem}
+.lcdate{font-size:.69rem;color:var(--text3)}
+.lcb{padding:.75rem 1.1rem}
+.lcexc{font-size:.78rem;color:var(--text2);line-height:1.62;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lcf{padding:.55rem 1.1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lftags{font-size:.67rem;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lfact{font-size:.73rem;color:var(--gold);font-weight:500;flex-shrink:0}
+
+/* DASHBOARD */
+.dshpg{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+.dshh h1{font-family:'Cormorant Garamond',serif;font-size:2rem}
+.dshh p{color:var(--text2);font-size:.84rem;margin-top:.18rem;margin-bottom:1.4rem}
+.dsts{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:.85rem;margin-bottom:1.3rem}
+.dst{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.15rem}
+.dsl{font-size:.69rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.18rem}
+.dsv{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold-lt);line-height:1}
+.dss{font-size:.71rem;color:var(--text3);margin-top:.18rem}
+.dtwo{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.dp{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.dph{padding:.62rem 1rem;border-bottom:1px solid var(--border);font-size:.69rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.dpb{padding:.9rem}
+.hrow{display:flex;align-items:center;gap:.65rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.hrow:last-child{border-bottom:none}
+.hico{font-size:.95rem;width:27px;height:27px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hnm{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdt{font-size:.67rem;color:var(--text3);flex-shrink:0}
+.lockmsg{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;text-align:center;color:var(--text2);gap:.5rem}
+.lockmsg .li{font-size:2.4rem;opacity:.35;margin-bottom:.2rem}
+
+/* RESPONSIVE */
+@media(max-width:860px){.awrap{grid-template-columns:1fr}.rcol{padding-left:0;margin-top:.9rem}.rgrid{grid-template-columns:1fr}.dtwo{grid-template-columns:1fr}}
+@media(max-width:600px){.nav-tabs{display:none}.stats{gap:1rem}}
+</style>
+</head>
+<body>
+
+<!-- API KEY MODAL — shown on first visit -->
+<div id="apiKeyModal">
+  <div class="akm-box">
+    <div class="akm-icon">🔑</div>
+    <h2>Enter Your Groq API Key</h2>
+    <p>LegalBuddy uses <strong>Groq's free tier</strong> — powered by Llama 3.1 on ultra-fast LPU hardware.<br/>No credit card needed. Your key stays in your browser only.</p>
+    <div class="akm-input-row">
+      <input type="password" id="apiKeyField" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"/>
+      <button id="apiKeySave">Start →</button>
+    </div>
+    <div class="akm-err" id="apiKeyErr"></div>
+    <div class="akm-tip">
+      Get a free key in 60 seconds:<br/>
+      <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a>
+      → Sign up free → Create API Key → Copy → Paste above.
+    </div>
+    <span class="akm-skip" onclick="skipApiKey()">Skip for now (analysis will be unavailable)</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="topNav">
+  <div class="nav-logo" onclick="goTab('home')">Lexis<span>AI</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="home">🏠 Home</button>
+    <button class="nav-tab" data-tab="analyze">⚖️ Analyze</button>
+    <button class="nav-tab" data-tab="library">📚 Library</button>
+    <button class="nav-tab" data-tab="dashboard">📊 Dashboard</button>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="nbtn nbtn-ghost" id="loginBtn">Log In</button>
+    <button class="nbtn nbtn-gold" id="signupBtn">Sign Up Free</button>
+  </div>
+</nav>
+
+<!-- FREE HF KEY BANNER -->
+<div id="hfBanner">
+  <strong>🆓 Free AI — Enter your Hugging Face token:</strong>
+  <div class="hf-fields">
+    <input type="password" id="hfKeyInput" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off"/>
+    <button id="hfSaveBtn" onclick="saveHFKey()">Save</button>
+  </div>
+  <span class="hf-tip">
+    Free forever — no credit card. Get yours in 60 seconds:
+    <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a>
+    → New token → Role: Read → Copy → paste here.
+  </span>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="moverlay" id="authModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeAuth()">✕</button>
+    <h2 id="mTitle">Welcome Back</h2>
+    <p class="msub" id="mSub">Sign in to save your analysis history.</p>
+    <div id="loginForm">
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="liEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="liPwd" type="password" placeholder="••••••••"/></div>
+      <div class="ferr" id="liErr"></div>
+      <button class="fsub" id="doLogin">Sign In</button>
+      <div class="fswitch">No account? <a onclick="setMode('signup')">Create one free →</a></div>
+    </div>
+    <div id="signupForm" style="display:none">
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="suName" type="text" placeholder="Jane Smith"/></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="suEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="suPwd" type="password" placeholder="Min. 6 characters"/></div>
+      <div class="ferr" id="suErr"></div>
+      <button class="fsub" id="doSignup">Create Account</button>
+      <div class="fswitch">Have an account? <a onclick="setMode('login')">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<div id="pageWrap">
+
+<!-- HOME -->
+<div class="tpage active" id="tab-home">
+  <section class="hero">
+    <div class="hgrid"></div>
+    <div class="hbadge">✦ RAG-Powered Legal Intelligence — 100% Free</div>
+    <h1>Understand Any Legal Document<br/><em>Instantly.</em></h1>
+    <p class="hsub">Upload contracts, bills, immigration forms, and filings. LexisAI classifies, retrieves relevant legal context, and delivers plain-English breakdowns, risks, and action plans — powered by free open-source AI.</p>
+    <div class="hbtns">
+      <button class="hbtn hbtn-p" onclick="goTab('analyze')">Start Analyzing Free →</button>
+      <button class="hbtn hbtn-o" onclick="goTab('library')">Browse Document Library</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="sn">35+</div><div class="sl">Doc Types</div></div>
+      <div class="stat"><div class="sn">RAG</div><div class="sl">Grounded</div></div>
+      <div class="stat"><div class="sn">15</div><div class="sl">Corpus Docs</div></div>
+      <div class="stat"><div class="sn">Free</div><div class="sl">Always</div></div>
+    </div>
+  </section>
+  <section class="features">
+    <div class="slbl">What We Do</div>
+    <div class="sttl">The Full Legal Intelligence Stack</div>
+    <div class="ssub">From a one-page NDA to the One Big Beautiful Bill — LexisAI has the context to analyze it right.</div>
+    <div class="fgrid">
+      <div class="fcard"><div class="ficon">🧠</div><div class="ftitle">RAG Classification</div><div class="fdesc">Classifies your document across 35+ types — federal bills, immigration forms, contracts, estate documents, and more.</div></div>
+      <div class="fcard"><div class="ficon">📖</div><div class="ftitle">Corpus Retrieval</div><div class="fdesc">Retrieves relevant provisions from our legal corpus — OBBB, ACA, I-485, GDPR, and more — to ground every analysis.</div></div>
+      <div class="fcard"><div class="ficon">⚠️</div><div class="ftitle">Specific Risk Detection</div><div class="fdesc">Surfaces concrete risks tied to actual clauses — cites specific provisions, dollar amounts, and deadlines.</div></div>
+      <div class="fcard"><div class="ficon">🗺️</div><div class="ftitle">Suggested Actions</div><div class="fdesc">Tailored next steps for each document type — immigration, estate, employment, real estate, tax, and more.</div></div>
+      <div class="fcard"><div class="ficon">🔍</div><div class="ftitle">Nuance Detection</div><div class="fdesc">Flags hidden triggers, ambiguous definitions, auto-renewal clauses, and carve-outs non-lawyers consistently miss.</div></div>
+      <div class="fcard"><div class="ficon">💬</div><div class="ftitle">Document Q&A</div><div class="fdesc">Ask anything about your specific document. Every answer is grounded in the actual text and retrieved legal context.</div></div>
+    </div>
+  </section>
+  <section class="ctasec">
+    <h2>Start Understanding Law Today</h2>
+    <p>Free forever. Just bring a free Hugging Face token.</p>
+    <button class="hbtn hbtn-p" onclick="openAuth('signup')">Create Free Account →</button>
+    <p style="font-size:.7rem;color:var(--text3);margin-top:.9rem">⚠️ LexisAI is for informational purposes only. Not a substitute for professional legal counsel.</p>
+  </section>
+</div>
+
+<!-- ANALYZE -->
+<div class="tpage" id="tab-analyze">
+  <div class="awrap">
+    <div class="lcol">
+      <div class="panel">
+        <div class="ph">📄 Upload Document</div>
+        <div class="pb">
+          <div class="uzone" id="dropZone">
+            <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx"/>
+            <div class="uzi">⬆️</div>
+            <p class="uzt"><strong>Drop a file here</strong> or click to browse</p>
+            <div class="uzf">PDF · TXT · DOC · DOCX — Max 15 MB</div>
+          </div>
+          <div class="flist" id="fileList"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph">⚙️ Analysis Options</div>
+        <div class="pb">
+          <div class="olist">
+            <div class="orow"><input type="checkbox" data-key="summary" checked/><label>📋 Executive Summary</label></div>
+            <div class="orow"><input type="checkbox" data-key="keypoints" checked/><label>📌 Key Provisions & Obligations</label></div>
+            <div class="orow"><input type="checkbox" data-key="risks" checked/><label>⚠️ Risk Assessment</label></div>
+            <div class="orow"><input type="checkbox" data-key="nuances" checked/><label>🔍 Legal Nuances & Red Flags</label></div>
+            <div class="orow"><input type="checkbox" data-key="actions" checked/><label>🗺️ Suggested Actions</label></div>
+            <div class="orow"><input type="checkbox" data-key="chat" checked/><label>💬 Follow-up Q&A</label></div>
+          </div>
+        </div>
+      </div>
+      <button class="bbtn bgold" id="analyzeBtn" disabled>
+        <span id="btnIcon">⚖️</span><span id="btnTxt">Analyze Document</span>
+      </button>
+      <div class="disc">⚠️ LexisAI provides AI-generated summaries for informational purposes only. Not legal advice. Always consult a licensed attorney.</div>
+    </div>
+    <div class="rcol" id="rcol">
+      <div class="estate">
+        <div class="esico">⚖️</div>
+        <div class="esttl">Ready to Analyze</div>
+        <p class="essub">Upload a legal document and click <strong style="color:var(--gold)">Analyze</strong> to get a RAG-powered breakdown.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY -->
+<div class="tpage" id="tab-library">
+  <div class="libpg">
+    <div class="libh">
+      <h1>Document Library</h1>
+      <p>Browse and analyze real legislation, immigration forms, and legal documents — all part of the RAG corpus.</p>
+    </div>
+    <div class="libfs" id="libFilters"></div>
+    <div class="libgrid" id="libGrid"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="tpage" id="tab-dashboard">
+  <div class="dshpg" id="dashContent"></div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  GROQ CONFIG  — Free, no credit card, CORS-enabled
+//  Model: llama-3.1-8b-instant  (14,400 req/day free)
+//  Get your free key at: console.groq.com → API Keys
+// ═══════════════════════════════════════════════════════
+const GROQ_API = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.1-8b-instant';
+
+// ═══════════════════════════════════════════════════════
+//  LEGAL CORPUS  (RAG knowledge base — inlined)
+// ═══════════════════════════════════════════════════════
+const CORPUS = [
+  {id:"obbb",title:"One Big Beautiful Bill (H.R. 1, 119th Congress)",date:"May 2025",category:"bill",badge:"bill",doc_class:"federal_bill",library:true,tags:"Tax · Medicaid · Immigration · Student Loans · Energy",
+   text:`H.R. 1 ONE BIG BEAUTIFUL BILL ACT 119th Congress. TITLE I TAX PROVISIONS. SEC 101: Individual income tax rates from Tax Cuts and Jobs Act of 2017 made permanent. Top rate 37% for incomes over $600,000 married filing jointly. Standard deduction increased to $30,000 married filing jointly, $15,000 single. SEC 102: Child tax credit increased to $2,500 per qualifying child 2025-2028, reverting to $2,000 thereafter. Refundable portion capped at $1,700. Phaseout begins at $400,000 married filing jointly. SEC 103: SALT deduction cap permanent at $10,000. Temporarily increased to $30,000 married filing jointly for incomes under $500,000 for 2025-2029. SEC 104: Federal estate tax exemption permanently $15,000,000 per individual, $30,000,000 married couples, indexed for inflation. SEC 106: Tips received by food service hospitality personal care employees excluded from gross income up to $25,000/year 2025-2028. Overtime pay excluded up to $10,000/year for earners under $150,000. TITLE II MEDICAID: SEC 201: Able-bodied adults aged 18-64 without dependents must complete 80 hours/month of community engagement work training education or service as Medicaid eligibility condition beginning January 1 2027. SEC 202: Federal Medicaid matching rate for ACA expansion states reduced from 90% to 80% beginning fiscal year 2027. SEC 203: Enhanced ACA premium tax credit subsidies expire December 31 2025 not renewed. TITLE III STUDENT LOANS: SEC 301: All income-driven repayment plans consolidated into Repayment Assistance Plan RAP. Monthly payments 10% of discretionary income. Loan forgiveness after 30 years. SAVE PAYE IBR plans closed to new enrollers after July 1 2026. SEC 302: Public Service Loan Forgiveness extended from 10 to 15 years. Forgiveness capped at $75,000 undergraduate $125,000 graduate. TITLE IV IMMIGRATION: SEC 401: Appropriates $46,500,000,000 for southern border wall. SEC 403: Asylum credible fear standard raised to clear probability of persecution. $1,000 asylum processing fee. SEC 404: Diversity Visa Lottery eliminated. Annual refugee admissions reduced to 15,000. TITLE V ENERGY: SEC 501: Clean Electricity Production Credit Clean Electricity Investment Credit Clean Vehicle Credit Energy Efficient Home Improvement Credit repealed December 31 2025. TITLE VI: SEC 601: Debt limit increased by $4,000,000,000,000. CBO estimates $3,800,000,000,000 deficit increase over 10-year budget window 2026-2035. Passed House 215-214 May 22 2025.`},
+  {id:"aca",title:"Affordable Care Act — Key Provisions",date:"March 2010",category:"act",badge:"act",doc_class:"federal_act",library:true,tags:"Healthcare · Insurance · Medicaid · Subsidies",
+   text:`PATIENT PROTECTION AND AFFORDABLE CARE ACT Public Law 111-148. No lifetime limits on essential health benefits. Annual limits prohibited. Dependent coverage extended to age 26. Pre-existing condition exclusions prohibited. Guaranteed issue and renewability. Essential Health Benefits 10 categories: ambulatory patient services emergency services hospitalization maternity and newborn care mental health substance use disorder prescription drugs rehabilitative services laboratory services preventive services pediatric services. Health Benefit Exchanges: Bronze 60% actuarial value Silver 70% Gold 80% Platinum 90%. Premium Tax Credits for incomes 100-400% FPL. Contribution ranges from 2.07% at 100% FPL to 9.78% at 400% FPL. Medicaid expansion to 133% FPL effectively 138% with 5% income disregard. Federal pays 100% through 2016 phasing to 90% by 2020. Expansion optional per NFIB v Sebelius 2012. 41 states and DC expanded as of 2024. Employer mandate: 50+ FTE employees must offer minimum essential coverage. Individual mandate penalty reduced to $0 by TCJA effective January 1 2019.`},
+  {id:"gdpr",title:"GDPR — General Data Protection Regulation",date:"May 2018",category:"act",badge:"act",doc_class:"federal_regulation",library:true,tags:"Privacy · Data Protection · Technology",
+   text:`GDPR Regulation EU 2016/679. Applies to organizations in EU processing personal data AND organizations outside EU serving EU residents. Personal data includes name email IP address location data cookie identifiers biometric data. Six lawful bases: consent contract performance legal obligation vital interests public task legitimate interests. Consent cannot be bundled with terms of service. Data Subject Rights: access within 30 days free; rectification; erasure right to be forgotten; restriction; data portability in machine-readable format; object to processing; rights against automated decisions. Data breach notification: supervisory authority within 72 hours data subjects without undue delay when high risk. International transfers only to adequate countries or under Standard Contractual Clauses. Schrems II 2020 invalidated EU-US Privacy Shield. Penalties: Tier 1 up to 10M euros or 2% global turnover Tier 2 up to 20M euros or 4% global turnover. Notable fines: Meta 1.2B euros 2023 Amazon 746M euros 2021 WhatsApp 225M euros 2021.`},
+  {id:"i485",title:"USCIS Form I-485 — Adjustment of Status",date:"2024",category:"immigration",badge:"immigration",doc_class:"i485",library:true,tags:"Immigration · Green Card · USCIS",
+   text:`FORM I-485 APPLICATION TO REGISTER PERMANENT RESIDENCE OR ADJUST STATUS. Eligibility: currently in US immigrant visa immediately available admissible. Categories: immediate relative of US citizen approved immigrant petition refugee asylee with 1+ years VAWA self-petitioner. Must have maintained continuous lawful status. Section 245i exception for petitions filed on or before April 30 2001 with $1,000 penalty fee. Required documents: Form I-485 Form I-864 Affidavit of Support Form I-693 Medical Examination sealed USCIS-approved civil surgeon two passport photos government ID passport admission stamp I-94 record approved petition birth certificate with certified translation 3 years tax returns police clearances. Filing fee $1,440 for ages 14-78. Biometrics required at Application Support Center. Do NOT travel without Form I-131 Advance Parole departure may be treated as abandonment. Processing times 12-36 months. Making false statement is federal crime punishable by up to 5 years imprisonment.`},
+  {id:"n400",title:"USCIS Form N-400 — Naturalization Application",date:"2024",category:"immigration",badge:"immigration",doc_class:"naturalization",library:true,tags:"Immigration · Citizenship · USCIS",
+   text:`FORM N-400 APPLICATION FOR NATURALIZATION. General 5-Year Rule: 18+ years old LPR for at least 5 years continuous residence 5 years physically present 30 months out of preceding 5 years resided in state 3 months. Marriage to US Citizen 3-Year Rule: married to living with US citizen 3 years LPR 3 years physically present 18 months. Continuous residence interrupted by single absence 6-12 months presumption of abandonment rebuttable. Absence over 12 months generally breaks continuous residence unless re-entry permit obtained before departure. Good Moral Character required for 5 years preceding application. Permanent bars: murder aggravated felony conviction after November 29 1990 persecution. English test: read write speak English. Exceptions 50/20 rule and 55/15 rule allow test in native language. Civics test: answer 6 of 10 questions correctly from 100 questions. Filing fee $760. Processing: receipt biometrics interview 6-18 months decision oath ceremony. Oath of Allegiance required. Denial appeal Form N-336 $800 fee within 30 days.`},
+  {id:"i589",title:"USCIS Form I-589 — Asylum Application",date:"2024",category:"immigration",badge:"immigration",doc_class:"asylum",library:true,tags:"Immigration · Asylum · Refugee",
+   text:`FORM I-589 APPLICATION FOR ASYLUM AND WITHHOLDING OF REMOVAL. May file if physically present in US not a lawful permanent resident. Must file within one year of last arrival unless changed or extraordinary circumstances. Five protected grounds: race religion nationality membership in particular social group political opinion. Well-founded fear standard: subjective genuine fear and objective reasonable 1-in-10 chance of persecution. Persecution serious harm physical violence imprisonment torture death threats severe discrimination. One-year deadline exceptions: changed circumstances extraordinary circumstances serious illness legal disability. Affirmative asylum: file with USCIS asylum office interview 12-24 months if approved granted asylum if not approved referred to immigration court. Defensive asylum: raised as defense in removal proceedings before Immigration Judge. Withholding of removal standard more likely than not greater than 50% persecution. Convention Against Torture more likely than not to be tortured no nexus requirement. Bars: persecution of others particularly serious crime aggravated felony national security firm resettlement. Employment Authorization apply after 180 days of filing. Path to green card apply Form I-485 one year after asylum grant.`},
+  {id:"nda",title:"Mutual Non-Disclosure Agreement",date:"2024",category:"contract",badge:"contract",doc_class:"nda",library:true,tags:"NDA · Confidentiality · Business",
+   text:`MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of January 15, 2024, between Acme Technologies Inc., a Delaware corporation ("Party A"), and BrightPath Ventures LLC, a California limited liability company ("Party B").
+
+1. PURPOSE. The parties wish to explore a potential strategic partnership and/or acquisition transaction (the "Purpose") and may need to disclose certain confidential information to each other.
+
+2. CONFIDENTIAL INFORMATION. "Confidential Information" means any information disclosed by one party to the other, directly or indirectly, in writing, orally, or by inspection, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and circumstances of disclosure, including but not limited to: business plans, financial data, customer lists, trade secrets, technical specifications, product designs, source code, marketing strategies, and personnel data.
+
+3. EXCLUSIONS. Confidential Information does not include information that: (a) is or becomes publicly known through no breach of this Agreement; (b) was rightfully in the receiving party's possession before disclosure; (c) is obtained from a third party without restriction on disclosure; or (d) is independently developed without reference to Confidential Information.
+
+4. OBLIGATIONS. Each party agrees to: (a) hold all Confidential Information in strict confidence using at least the same degree of care it uses to protect its own confidential information, but no less than reasonable care; (b) use Confidential Information solely for the Purpose; (c) not disclose Confidential Information to any third parties without prior written consent; (d) limit access to employees and advisors who need to know and who are bound by written confidentiality obligations; and (e) notify the disclosing party immediately upon discovering any unauthorized use or disclosure.
+
+5. TERM. This Agreement shall remain in effect for three (3) years from the Effective Date. Obligations with respect to trade secrets shall survive indefinitely.
+
+6. RETURN OR DESTRUCTION. Upon request or termination, each party shall promptly return or destroy all Confidential Information and certify such destruction in writing.
+
+7. NO LICENSE. Nothing herein grants any license, right, or interest in any intellectual property of the disclosing party.
+
+8. REMEDIES. Each party acknowledges that breach may cause irreparable harm for which monetary damages would be inadequate and that injunctive relief may be sought without bond.
+
+9. GOVERNING LAW. This Agreement shall be governed by the laws of the State of Delaware, without regard to conflict of law principles. Any dispute shall be resolved in the state or federal courts located in Wilmington, Delaware.
+
+10. ENTIRE AGREEMENT. This Agreement constitutes the entire agreement between the parties concerning its subject matter and supersedes all prior agreements relating to Confidential Information.
+
+ACME TECHNOLOGIES INC.                    BRIGHTPATH VENTURES LLC
+By: _______________________               By: _______________________
+Name: Sarah L. Chen, CEO                  Name: Marcus J. Rivera, Managing Partner
+Date: January 15, 2024                    Date: January 15, 2024`},
+
+  {id:"employment",title:"Employment Agreement (At-Will, Tech Company)",date:"2024",category:"contract",badge:"contract",doc_class:"employment_contract",library:true,tags:"Employment · Contract · Non-Compete · Equity",
+   text:`EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is entered into as of March 1, 2024, between NovaSpark Inc. ("Company") and Jordan M. Williams ("Employee").
+
+1. POSITION AND DUTIES. Employee is hired as Senior Software Engineer. Employee shall report to the VP of Engineering and shall perform all duties associated with such position as directed by the Company.
+
+2. AT-WILL EMPLOYMENT. Employment is at-will. Either party may terminate the employment relationship at any time, with or without cause, and with or without notice, subject to Section 8.
+
+3. COMPENSATION.
+   (a) Base Salary: $165,000 per year, paid bi-weekly.
+   (b) Annual Bonus: Discretionary target of 15% of base salary ($24,750), based on individual and Company performance. No bonus guaranteed.
+   (c) Equity: 25,000 Restricted Stock Units (RSUs) vesting over 4 years with a 1-year cliff (6,250 units vest at 12 months; remainder vest monthly over 36 months), subject to the Company's equity plan.
+   (d) Benefits: Medical, dental, vision, 401(k) with 4% employer match, $2,000 annual learning budget, unlimited PTO (subject to manager approval).
+
+4. CONFIDENTIALITY. Employee shall hold all Confidential Information in strict confidence during and after employment and shall not use or disclose it for any purpose other than the Company's benefit.
+
+5. INTELLECTUAL PROPERTY ASSIGNMENT. Employee hereby assigns to Company all inventions, developments, improvements, and works of authorship created during employment, including those created outside working hours if: (a) related to Company's current or reasonably anticipated business; (b) resulting from work performed for Company; or (c) using Company equipment or resources. Employee waives all moral rights.
+
+6. NON-SOLICITATION. For twelve (12) months following termination, Employee shall not: (a) solicit, recruit, or hire any Company employee or contractor; or (b) solicit or induce any customer, client, or partner to reduce or terminate their business relationship with Company.
+
+7. NON-COMPETE. For twelve (12) months following termination, Employee shall not engage in, or provide services to, any business that directly competes with Company's products in any geographic market where Company conducts business. Employee acknowledges receipt of $5,000 additional consideration for this restriction.
+
+8. SEVERANCE. If Company terminates Employee without Cause, Company shall pay Employee 8 weeks of base salary as severance, contingent on Employee signing a general release of claims.
+
+9. ARBITRATION. Any dispute arising from this Agreement shall be resolved by binding arbitration administered by JAMS under its Employment Arbitration Rules. CLASS AND COLLECTIVE ACTION WAIVER: Employee waives the right to participate in any class action.
+
+10. GOVERNING LAW. This Agreement shall be governed by California law.
+
+NOVASPARK INC.                            EMPLOYEE
+By: _______________________               _______________________
+Name: Priya Kapoor, CEO                   Jordan M. Williams
+Date: March 1, 2024                       Date: March 1, 2024`},
+
+  {id:"lease",title:"Residential Lease Agreement — California",date:"2024",category:"contract",badge:"contract",doc_class:"lease",library:true,tags:"Lease · Rental · Housing · Tenant Rights",
+   text:`CALIFORNIA RESIDENTIAL LEASE AGREEMENT
+
+This Lease Agreement ("Lease") is entered into as of February 1, 2024, between Daniel T. Owens ("Landlord") and Alexis M. Fernandez ("Tenant").
+
+PROPERTY: 4521 Maple Grove Drive, Apt 3B, Los Angeles, CA 90025.
+
+1. LEASE TERM. Fixed-term lease commencing February 1, 2024 and ending January 31, 2025. Upon expiration, this Lease automatically converts to a month-to-month tenancy unless either party provides 30 days' written notice.
+
+2. RENT. Monthly rent: $2,850.00, due on the 1st of each month. Rent is late if not received by the 5th. Late fee: 5% of monthly rent ($142.50) or $75.00, whichever is greater. Returned check fee: $35.00.
+
+3. SECURITY DEPOSIT. $5,700.00 (2 months' rent). Under California Civil Code §1950.5, Landlord must return the deposit or provide an itemized written statement of deductions within 21 days of Tenant vacating. Normal wear and tear is not deductible. Maximum deposit is 2 months' rent for unfurnished units.
+
+4. UTILITIES. Tenant is responsible for: electricity, gas, internet, and cable. Landlord is responsible for: water, trash, and sewer.
+
+5. OCCUPANTS. Only the following individuals may reside in the unit: Alexis M. Fernandez. Unauthorized occupants are grounds for eviction.
+
+6. PETS. No pets permitted without prior written Landlord consent and a separate $500 pet deposit.
+
+7. MAINTENANCE. Tenant shall: maintain the unit in clean and sanitary condition; promptly report damage; not make alterations without written consent. Landlord shall maintain the unit in a habitable condition per California Civil Code §1941 and make repairs within a reasonable time after notice.
+
+8. LANDLORD ENTRY. Emergency: without notice. Non-emergency: Landlord must provide 24-hour advance written notice and may only enter between 8:00 AM and 8:00 PM (Cal. Civ. Code §1954).
+
+9. PROHIBITED ACTIVITIES. Smoking on premises; subletting without consent; commercial activity; excessive noise after 10:00 PM; any illegal activity.
+
+10. EARLY TERMINATION. If Tenant terminates before lease end, Tenant owes: (a) 60 days' written notice; (b) two (2) months' rent as an early termination fee ($5,700); and (c) rent through the date a replacement tenant is found. Military tenants may terminate with 30 days' notice under the Servicemembers Civil Relief Act (SCRA).
+
+11. RENT CONTROL. This property may be subject to the Los Angeles Rent Stabilization Ordinance (RSO). Tenant is encouraged to verify applicability with the LA Housing Department.
+
+LANDLORD: _____________________          TENANT: _____________________
+Daniel T. Owens                           Alexis M. Fernandez
+Date: February 1, 2024                   Date: February 1, 2024`},
+
+  {id:"will",title:"Last Will and Testament — Sample",date:"2024",category:"personal",badge:"personal",doc_class:"will_trust",library:true,tags:"Estate Planning · Will · Probate",
+   text:`LAST WILL AND TESTAMENT OF MARGARET ANN KOWALSKI
+
+I, Margaret Ann Kowalski, a resident of Cook County, Illinois, being of legal age, sound mind, and disposing memory, and not acting under duress, menace, fraud, or undue influence of any person, hereby make, publish, and declare this instrument to be my Last Will and Testament, and hereby revoke all former wills and codicils made by me.
+
+ARTICLE I — DECLARATIONS. I am married to Robert James Kowalski. I have two children: Emily Rose Kowalski (born 1995) and Thomas David Kowalski (born 1998).
+
+ARTICLE II — EXECUTOR. I appoint my husband, Robert James Kowalski, as Executor of this Will. If he is unable or unwilling to serve, I appoint my sister, Carol Ann Briggs, as Alternate Executor. My Executor shall serve without bond and shall have full authority to: collect and manage assets, pay debts and expenses, sell or mortgage property, file tax returns, and distribute the estate.
+
+ARTICLE III — SPECIFIC BEQUESTS.
+(a) My diamond engagement ring to Emily Rose Kowalski.
+(b) My 1967 Ford Mustang to Thomas David Kowalski.
+(c) $10,000 to the Chicago Food Depository (EIN: 36-2883476).
+If any beneficiary named in this Article does not survive me by thirty (30) days, that bequest shall lapse into the residuary estate.
+
+ARTICLE IV — RESIDUARY ESTATE. I give all the rest, residue, and remainder of my estate, both real and personal, to my husband Robert James Kowalski, if he survives me by thirty (30) days. If he does not survive me, the residuary estate shall pass in equal shares to Emily Rose Kowalski and Thomas David Kowalski, or to their descendants per stirpes.
+
+ARTICLE V — GUARDIAN. If my children are minors at my death, I nominate Robert James Kowalski as Guardian of their persons and estates. If he cannot serve, I nominate Carol Ann Briggs.
+
+ARTICLE VI — MINOR'S TRUST. Any share passing to a minor shall be held by the Trustee under the Illinois Uniform Transfers to Minors Act until the minor attains age twenty-one (21).
+
+ARTICLE VII — NO-CONTEST CLAUSE. Any beneficiary who contests or challenges this Will, or any of its provisions, shall forfeit any and all bequests to them under this Will.
+
+ARTICLE VIII — DIGITAL ASSETS. My Executor is authorized to access, manage, and distribute my digital assets including online accounts, cryptocurrency, and digital files in accordance with applicable law.
+
+IN WITNESS WHEREOF, I sign this Will on March 10, 2024, at Chicago, Illinois.
+
+________________________________
+Margaret Ann Kowalski, Testator
+
+[Witness signatures and notarization block follow]
+
+IMPORTANT NOTE: Beneficiary designations on retirement accounts (401k, IRA) and life insurance policies pass outside of this Will and must be updated separately.`},
+
+  {id:"poa",title:"Durable Financial Power of Attorney",date:"2024",category:"personal",badge:"personal",doc_class:"power_of_attorney",library:true,tags:"Estate Planning · POA · Elder Law",
+   text:`DURABLE POWER OF ATTORNEY FOR FINANCES
+
+PRINCIPAL: Howard G. Steinberg, residing at 88 Birchwood Lane, Austin, Texas 78704.
+AGENT (Attorney-in-Fact): Sandra L. Steinberg (spouse), residing at the same address.
+ALTERNATE AGENT: Kevin D. Steinberg (son), residing at 204 Pine Hollow Rd, Dallas, Texas 75201.
+
+THIS IS A DURABLE POWER OF ATTORNEY. THIS POWER OF ATTORNEY SHALL NOT BE AFFECTED BY THE SUBSEQUENT DISABILITY OR INCAPACITY OF THE PRINCIPAL. It remains effective unless and until revoked by me in writing.
+
+EFFECTIVE DATE: This Power of Attorney is IMMEDIATE — effective upon signing, not contingent on incapacity.
+
+POWERS GRANTED. I grant my Agent full power and authority to act on my behalf with respect to the following:
+
+1. REAL PROPERTY. Buy, sell, lease, mortgage, and manage any real property I own or may acquire, including the property at 88 Birchwood Lane, Austin, TX.
+
+2. FINANCIAL ACCOUNTS. Access, deposit to, withdraw from, and manage all checking, savings, money market, and CD accounts at any financial institution.
+
+3. INVESTMENTS. Buy, sell, exchange, and manage stocks, bonds, mutual funds, ETFs, and other securities.
+
+4. TAXES. Prepare, sign, and file federal and state tax returns; represent me before the IRS; receive any tax refunds.
+
+5. GOVERNMENT BENEFITS. Apply for and manage Social Security, Medicare, Medicaid, VA benefits, and any other government entitlement programs on my behalf.
+
+6. LEGAL MATTERS. Initiate or defend legal claims, retain attorneys, settle disputes, and accept service of legal process.
+
+7. INSURANCE. Purchase, cancel, or modify any insurance policies; collect insurance proceeds.
+
+8. BUSINESS OPERATIONS. Manage any business interest I hold.
+
+LIMITATIONS. My Agent may NOT: (a) make or change my Will; (b) change beneficiary designations on life insurance or retirement accounts without my written consent; (c) use my assets for Agent's personal benefit except as authorized compensation; (d) make gifts exceeding the annual exclusion amount ($18,000 per recipient in 2024) without court approval.
+
+FIDUCIARY DUTY. My Agent shall act in my best interest, with loyalty, reasonable care, and prudence; keep my assets separate from Agent's assets; maintain complete records; and provide an accounting upon request.
+
+COMPENSATION. My Agent shall be entitled to reasonable compensation for services rendered, not to exceed $50 per hour.
+
+REVOCATION. I may revoke this Power of Attorney at any time I am competent, by written revocation delivered to my Agent.
+
+THIRD PARTY RELIANCE. Third parties may rely on a copy of this document. Financial institutions may require their own POA form or refuse forms older than 12 months.
+
+Executed this 5th day of April, 2024.
+
+__________________________________
+Howard G. Steinberg, Principal
+
+[Notarization block]`},
+
+  {id:"eviction",title:"3-Day Notice to Pay Rent or Quit",date:"2024",category:"personal",badge:"personal",doc_class:"eviction_notice",library:true,tags:"Eviction · Housing · Tenant Rights",
+   text:`THREE-DAY NOTICE TO PAY RENT OR QUIT
+
+TO: Carlos R. Mendez and All Other Occupants
+PROPERTY ADDRESS: 712 Westlake Avenue, Unit 4, Seattle, Washington 98109
+
+YOU ARE HEREBY NOTIFIED that the rent for the above-described premises, for the rental period of March 1, 2024 through March 31, 2024, is now due and unpaid. The total amount owed is as follows:
+
+   Monthly Rent Due:         $1,950.00
+   Late Fee (after 5th):      $97.50
+   Prior Balance:             $0.00
+   TOTAL AMOUNT DUE:        $2,047.50
+
+WITHIN THREE (3) DAYS after service of this notice, you must either:
+(1) PAY the total amount of $2,047.50 in full to: Pacific Crest Properties LLC, 4400 Aurora Avenue N, Suite 200, Seattle, WA 98103 (money order or cashier's check only); OR
+(2) VACATE and surrender possession of the above-described premises.
+
+IF YOU FAIL TO DO EITHER, legal proceedings will be commenced against you to recover possession of the premises, unpaid rent, damages, and attorney's fees.
+
+TENANT RIGHTS NOTICE (Washington State):
+- You have the right to pay the FULL amount due to cure this notice and stop eviction proceedings.
+- Partial payment does NOT satisfy this notice unless your landlord accepts it IN WRITING.
+- You may NOT be evicted in retaliation for reporting habitability issues to a government agency or exercising any legal right (RCW 59.18.240).
+- If you believe this notice is improper, contact a tenant's rights attorney immediately. Free legal assistance: Northwest Justice Project (206) 464-1519 or lawhelp.org/wa.
+- Washington State requires a 14-day notice for nonpayment before a 3-day notice can be served (RCW 59.12.030) — confirm proper procedure has been followed.
+- You have the right to file a written answer within the time allowed if an unlawful detainer action is filed in court.
+
+PROOF OF SERVICE: This notice was served on March 8, 2024 by:
+[X] Personal service on tenant
+[ ] Substituted service (left with adult + mailed)
+[ ] Posted and mailed
+
+__________________________________
+Pacific Crest Properties LLC
+By: Jennifer Holtz, Property Manager
+Date Served: March 8, 2024`},
+
+  {id:"w2",title:"IRS Form W-2 — Wage and Tax Statement (Example)",date:"2024",category:"personal",badge:"personal",doc_class:"tax_form",library:true,tags:"Tax · IRS · W-2 · Employment",
+   text:`IRS FORM W-2 — WAGE AND TAX STATEMENT
+Tax Year: 2023
+
+EMPLOYER INFORMATION:
+Employer Name: Horizon Financial Group LLC
+Employer EIN: 47-3821056
+Employer Address: 1200 Commerce Blvd, Suite 500, Charlotte, NC 28202
+
+EMPLOYEE INFORMATION:
+Employee Name: Patricia J. Monroe
+Employee SSN: ***-**-4521
+Employee Address: 88 Pinecrest Drive, Charlotte, NC 28210
+
+BOX-BY-BOX BREAKDOWN:
+Box 1  — Wages, tips, other compensation:        $87,400.00
+         (Gross salary $95,000 minus pre-tax deductions: 401k $8,000 + health ins $1,200 + FSA $400 = $9,600 in pre-tax deductions NOT in Box 1)
+
+Box 2  — Federal income tax withheld:            $14,822.00
+         (Enter on Form 1040, Line 25a)
+
+Box 3  — Social Security wages:                  $95,000.00
+         (Includes pre-tax 401k deferrals; capped at $160,200 for 2023)
+
+Box 4  — Social Security tax withheld:           $5,890.00
+         (Should equal exactly 6.2% of Box 3 = $5,890.00 — verify!)
+
+Box 5  — Medicare wages and tips:                $95,000.00
+         (No wage cap for Medicare)
+
+Box 6  — Medicare tax withheld:                  $1,377.50
+         (1.45% of Box 5; additional 0.9% applies if wages exceed $200,000)
+
+Box 12 — Code D: 401(k) contributions:           $8,000.00
+         Code DD: Employer-sponsored health coverage cost: $6,200.00 (INFORMATIONAL ONLY — not income)
+
+Box 13 — Retirement plan checkbox: [X] CHECKED
+         (Affects IRA deductibility — if covered by employer plan, Roth IRA phase-out begins at $73,000 MAGI for single filers in 2023)
+
+Box 15 — State: NC   State ID: 99-0047312
+Box 16 — State wages:   $87,400.00
+Box 17 — State income tax withheld:  $4,370.00
+
+WHAT TO DO WITH THIS FORM:
+- File with your federal Form 1040 and state return by April 15, 2024.
+- Need an extension? File Form 4868 by April 15 for 6 additional months to FILE (not to pay).
+- Discrepancy in Box 4? If you had multiple employers in 2023 and combined Box 3 wages exceeded $160,200, you may have overpaid Social Security tax — claim a credit on Form 1040 Schedule 3, Line 11.
+- Missing your W-2? Contact employer first. If not received by Feb 15, contact the IRS at 800-829-1040.
+- Error on your W-2? Request a corrected Form W-2c from your employer.`},
+  {id:"chips",title:"CHIPS and Science Act of 2022",date:"August 2022",category:"act",badge:"act",doc_class:"federal_act",library:true,tags:"Technology · Semiconductors · National Security",
+   text:`CHIPS AND SCIENCE ACT Public Law 117-167 August 9 2022. CHIPS for America Fund $52,700,000,000 total. Manufacturing incentives $39,000,000,000 in grants loans loan guarantees for semiconductor fab construction expansion modernization in United States. China restriction guardrails 10-year clawback: any recipient who significantly expands semiconductor manufacturing capacity in foreign country of concern China Russia North Korea Iran within 10 years must repay full amount with interest. Significant expansion defined as any expansion of leading-edge or advanced chip capacity mature-node expansion above 5% threshold. Advanced Manufacturing Investment Credit: 25% investment tax credit Section 48D for semiconductor manufacturing equipment and fab construction. Direct pay option for entities without tax liability. Workforce requirements: all recipients must provide childcare for facility workers develop worker and community investment plan no stock buybacks or dividends during grant period. NSF $81,000,000,000 authorized over 5 years. DOE Office of Science $68,000,000,000. Investment announcements: TSMC $65B Arizona $6.6B grant Intel $100B multi-state $8.5B grant Samsung $17B Texas $6.4B grant Micron $125B memory $6.1B grant.`},
+  {id:"eo14110",title:"Executive Order 14110 — Safe & Trustworthy AI",date:"October 2023",category:"exec",badge:"exec",doc_class:"executive_order",library:true,tags:"AI Policy · Technology · National Security",
+   text:`EXECUTIVE ORDER 14110 October 30 2023. Developers of dual-use foundation models trained using more than 10^26 floating-point operations FLOPs must notify federal government when training such models and share results of all red-team safety tests with US government before public release. NIST shall create standards tools and tests for AI safety security and trustworthiness. Department of Commerce to develop guidance for authentication and watermarking of government-generated synthetic content. Department of Energy and intelligence community to evaluate AI risks to critical infrastructure and CBRN threats. DHS to establish AI Safety and Security Board. Federal agencies to streamline visa processes for AI talent. Department of Labor to publish guidance within 180 days on employers obligations when AI used in employment decisions. Each agency to designate Chief AI Officer within 60 days. STATUS 2025: President Trump revoked EO 14110 by EO 14179 on January 20 2025.`}
+];
+
+// ═══════════════════════════════════════════════════════
+//  SUGGESTED ACTIONS
+// ═══════════════════════════════════════════════════════
+const ACTIONS = {
+  federal_bill:[
+    {icon:"📞",title:"Contact Your Representatives",description:"Find your senators and representative at congress.gov and communicate your position before any floor vote.",priority:"high"},
+    {icon:"🗺️",title:"Identify Sections That Affect You",description:"Search the bill text for your income bracket, employer type, or benefits program to find directly relevant provisions.",priority:"high"},
+    {icon:"📰",title:"Track on congress.gov",description:"Monitor committee markups, amendments, and scheduled floor votes on congress.gov.",priority:"medium"},
+    {icon:"⚖️",title:"Consult a Tax or Benefits Attorney",description:"If tax, Medicaid, or student-loan provisions affect you materially, seek personalized legal or financial counsel.",priority:"medium"},
+  ],
+  employment_contract:[
+    {icon:"⚠️",title:"Scrutinize the Non-Compete",description:"Check geographic scope, duration, and covered roles. Non-competes can block your next job for 1–2 years.",priority:"high"},
+    {icon:"💰",title:"Negotiate Before Signing",description:"Salary, bonus, equity, vacation, and remote-work terms are almost always negotiable before you sign.",priority:"high"},
+    {icon:"📋",title:"Understand At-Will and Severance",description:"At-will means termination at any time. Confirm whether severance is guaranteed or purely discretionary.",priority:"high"},
+    {icon:"📅",title:"Calendar Equity Vesting",description:"Note your 1-year cliff date and monthly vesting schedule so you never leave money on the table.",priority:"medium"},
+  ],
+  nda:[
+    {icon:"🔍",title:"Narrow the Confidentiality Definition",description:"Overly broad definitions can restrict your own prior work. Push for a precise, limited scope.",priority:"high"},
+    {icon:"📅",title:"Verify the Term / Expiration",description:"NDAs with no end date bind you indefinitely. Negotiate a 2–5 year term.",priority:"high"},
+    {icon:"✏️",title:"Request Mutual Obligations",description:"If both parties share sensitive info, a one-sided NDA is inequitable — request mutual terms.",priority:"medium"},
+    {icon:"⚖️",title:"Check Jurisdiction and Remedies",description:"Know which state's law governs and what damages or injunctive relief are available for breach.",priority:"medium"},
+  ],
+  lease:[
+    {icon:"📸",title:"Photograph the Property on Day 1",description:"Document every room with timestamps and email to your landlord within 24 hours to create a dispute-proof record.",priority:"high"},
+    {icon:"💰",title:"Know Your State's Deposit Rules",description:"Check your state's deposit cap, itemization requirements, and return deadline (14–30 days varies by state).",priority:"high"},
+    {icon:"📋",title:"Read the Early Termination Clause",description:"Most leases charge 1–2 months rent for early exit. Military tenants have SCRA protections.",priority:"high"},
+    {icon:"📅",title:"Calendar the Renewal Deadline",description:"Many leases auto-renew unless you give 30–60 days written notice. Missing it locks you in for another year.",priority:"medium"},
+  ],
+  i485:[
+    {icon:"⚖️",title:"Hire an Immigration Attorney",description:"I-485 errors — even minor ones — cause denials and years of delay. An AILA-member attorney is strongly recommended.",priority:"high"},
+    {icon:"💉",title:"Schedule Your Medical Exam (I-693)",description:"Book with a USCIS-approved civil surgeon. The sealed exam must accompany your application.",priority:"high"},
+    {icon:"✈️",title:"Get Advance Parole Before Traveling",description:"Do NOT leave the US after filing I-485 without an approved I-131. Departure may be treated as abandonment.",priority:"high"},
+    {icon:"📋",title:"Gather 3 Years of Residence Evidence",description:"Tax returns, pay stubs, lease agreements, bank statements proving continuous US residence.",priority:"high"},
+  ],
+  naturalization:[
+    {icon:"📚",title:"Study All 100 Civics Questions",description:"Available at uscis.gov/citizenship. You must correctly answer 6 of 10 during your interview.",priority:"high"},
+    {icon:"📋",title:"Document Every International Trip",description:"List all trips outside the US for 5 years with exact dates. Absences over 6 months can break continuous residence.",priority:"high"},
+    {icon:"💰",title:"Confirm Tax Compliance",description:"File and pay all federal taxes before your interview. The officer will ask about tax compliance directly.",priority:"high"},
+    {icon:"⚖️",title:"Disclose All Criminal History",description:"Even arrests without conviction must be disclosed. Have an immigration attorney review your record before filing.",priority:"high"},
+  ],
+  asylum:[
+    {icon:"⚖️",title:"Hire an Immigration Attorney Immediately",description:"Asylum cases are highly fact-specific. Legal representation dramatically increases approval rates.",priority:"high"},
+    {icon:"📅",title:"File Within One Year of Arrival",description:"The 1-year deadline is a near-absolute bar. File even if your evidence is incomplete — supplement later.",priority:"high"},
+    {icon:"📝",title:"Gather Persecution Evidence",description:"Police reports, medical records, photos, country-conditions reports, and witness statements.",priority:"high"},
+    {icon:"🔒",title:"Protect Case Confidentiality",description:"Do not post about your case online. USCIS cannot contact your home country government about your case.",priority:"high"},
+  ],
+  will_trust:[
+    {icon:"⚖️",title:"Have an Estate Attorney Review",description:"A single ambiguous clause can trigger costly probate disputes or unintended tax consequences.",priority:"high"},
+    {icon:"👤",title:"Update Beneficiary Designations Separately",description:"Retirement accounts and life insurance pass by beneficiary designation — they override the will.",priority:"high"},
+    {icon:"📅",title:"Revisit After Every Major Life Event",description:"Marriage, divorce, birth of a child, or large inheritance should trigger an immediate will review.",priority:"high"},
+    {icon:"🔒",title:"Store Safely and Brief Your Executor",description:"Keep the original in a fireproof safe or with your attorney. Your executor must know where to find it.",priority:"medium"},
+  ],
+  power_of_attorney:[
+    {icon:"⚠️",title:"Know Whether It's Immediate or Springing",description:"An immediate POA is active now. A springing POA only activates upon certified incapacity.",priority:"high"},
+    {icon:"🔍",title:"Verify the Scope of Powers Granted",description:"Check whether the POA covers finances, healthcare, or both — and any dollar limits on transactions.",priority:"high"},
+    {icon:"📋",title:"Notify Financial Institutions",description:"Banks may require their own POA form or refuse forms older than 12 months.",priority:"medium"},
+  ],
+  eviction_notice:[
+    {icon:"⚖️",title:"Contact a Tenant Rights Attorney Today",description:"You have only 3–14 days depending on your state. Free legal aid is available at lawhelp.org.",priority:"high"},
+    {icon:"💰",title:"Pay in Full or Respond Before the Deadline",description:"Paying the full amount owed within the notice period stops the eviction. Always get a signed receipt.",priority:"high"},
+    {icon:"🛡️",title:"Check for Habitability or Retaliation Defenses",description:"Failure to repair or retaliatory eviction can be raised as defenses in court.",priority:"high"},
+    {icon:"📋",title:"Gather Your Payment Records",description:"Bank statements, money order stubs, and written communications with your landlord.",priority:"medium"},
+  ],
+  tax_form:[
+    {icon:"✅",title:"Verify All Boxes Match Your Records",description:"Check your name, SSN, employer EIN, and wage amounts. Request a W-2c for any errors.",priority:"high"},
+    {icon:"📊",title:"Cross-Check Against Your Pay Stubs",description:"Box 1 wages should equal annual gross pay minus pre-tax deductions (401k, health insurance, FSA, HSA).",priority:"high"},
+    {icon:"💰",title:"Claim Excess Social Security Tax",description:"If you had multiple employers and combined wages exceeded $168,600, claim the overpayment credit on Form 1040.",priority:"medium"},
+    {icon:"📅",title:"File or Extend by April 15",description:"Form 4868 gives an automatic 6-month extension to file (interest accrues on unpaid taxes).",priority:"medium"},
+  ],
+  general:[
+    {icon:"⚖️",title:"Consult a Licensed Attorney",description:"Before signing or acting on this document, have a qualified attorney in the relevant area review it.",priority:"high"},
+    {icon:"📋",title:"List Every Obligation and Deadline",description:"Extract every date, payment, and requirement and calendar them immediately.",priority:"high"},
+    {icon:"🔍",title:"Check for Auto-Renewal Provisions",description:"Many contracts renew automatically unless you give written notice 30–60 days before expiration.",priority:"medium"},
+    {icon:"📝",title:"Keep a Fully Executed Copy",description:"Store a signed copy of every legal document in a secure, accessible location.",priority:"medium"},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const S = {
+  hfKey: localStorage.getItem('lx_hfkey') || '',
+  user: null,
+  fileText: '',
+  fileName: '',
+  docClass: 'general',
+  chatHistory: [],
+  lastAnalysis: null,
+};
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+function init(){
+  try { S.user = JSON.parse(localStorage.getItem('lx_user')); } catch{}
+  if(S.user) renderLoggedIn();
+  document.querySelectorAll('.nav-tab').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
+  setupFileUpload();
+  document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+  setupAuth();
+  renderLibrary();
+
+  // Show API key modal if no key saved yet
+  const modal = document.getElementById('apiKeyModal');
+  const field = document.getElementById('apiKeyField');
+  const saveBtn = document.getElementById('apiKeySave');
+  if(S.hfKey){
+    modal.classList.add('hidden');
+  } else {
+    modal.classList.remove('hidden');
+  }
+  saveBtn.addEventListener('click', saveApiKey);
+  field.addEventListener('keydown', e => { if(e.key === 'Enter') saveApiKey(); });
+}
+
+function saveApiKey(){
+  const field = document.getElementById('apiKeyField');
+  const errEl = document.getElementById('apiKeyErr');
+  const k = field.value.trim();
+  if(!k || !k.startsWith('gsk_')){
+    errEl.textContent = 'Please enter a valid Groq key — it must start with gsk_';
+    return;
+  }
+  errEl.textContent = '';
+  S.hfKey = k;
+  localStorage.setItem('lx_hfkey', k);
+  document.getElementById('apiKeyModal').classList.add('hidden');
+  toast('Groq key saved ✓ You can now analyze any document.', 'green');
+}
+
+function skipApiKey(){
+  document.getElementById('apiKeyModal').classList.add('hidden');
+  toast('No token set — analysis unavailable until you add one.', '');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HF KEY
+// ═══════════════════════════════════════════════════════
+function saveHFKey(){
+  const k = document.getElementById('hfKeyInput').value.trim();
+  if(!k || !k.startsWith('hf_')){ toast('Enter a valid Hugging Face token (starts with hf_…)', 'red'); return; }
+  S.hfKey = k;
+  localStorage.setItem('lx_hfkey', k);
+  document.getElementById('hfBanner').classList.add('hidden');
+  toast('Token saved ✓ You can now analyze documents.', 'green');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════════
+function goTab(id){
+  document.querySelectorAll('.tpage').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id)?.classList.add('active');
+  document.querySelector(`.nav-tab[data-tab="${id}"]`)?.classList.add('active');
+  if(id==='dashboard') renderDashboard();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+function setupAuth(){
+  const loginBtn  = document.getElementById('loginBtn');
+  const signupBtn = document.getElementById('signupBtn');
+  if(loginBtn)  loginBtn.onclick  = () => openAuth('login');
+  if(signupBtn) signupBtn.onclick = () => openAuth('signup');
+  const doLoginBtn  = document.getElementById('doLogin');
+  const doSignupBtn = document.getElementById('doSignup');
+  if(doLoginBtn)  doLoginBtn.onclick  = doLogin;
+  if(doSignupBtn) doSignupBtn.onclick = doSignup;
+  ['liEmail','liPwd'].forEach(id => { const el=document.getElementById(id); if(el) el.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); }); });
+  ['suName','suEmail','suPwd'].forEach(id => { const el=document.getElementById(id); if(el) el.addEventListener('keydown', e => { if(e.key==='Enter') doSignup(); }); });
+}
+function openAuth(m){ document.getElementById('authModal').classList.add('open'); setMode(m); }
+function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
+function setMode(m){
+  const isL = m==='login';
+  document.getElementById('mTitle').textContent = isL ? 'Welcome Back' : 'Create Account';
+  document.getElementById('mSub').textContent = isL ? 'Sign in to save your analysis history.' : 'Free forever. No credit card needed.';
+  document.getElementById('loginForm').style.display = isL ? '' : 'none';
+  document.getElementById('signupForm').style.display = isL ? 'none' : '';
+}
+function doLogin(){
+  const email = document.getElementById('liEmail').value.trim().toLowerCase();
+  const pwd   = document.getElementById('liPwd').value;
+  const accs  = JSON.parse(localStorage.getItem('lx_accs')||'{}');
+  if(!accs[email] || accs[email].pwd !== btoa(pwd)){ showErr('liErr','Invalid email or password.'); return; }
+  S.user = {name: accs[email].name, email};
+  localStorage.setItem('lx_user', JSON.stringify(S.user));
+  closeAuth(); renderLoggedIn();
+  toast('Welcome back, '+S.user.name.split(' ')[0]+'! 👋', 'green');
+}
+function doSignup(){
+  const name  = document.getElementById('suName').value.trim();
+  const email = document.getElementById('suEmail').value.trim().toLowerCase();
+  const pwd   = document.getElementById('suPwd').value;
+  if(!name||!email||!pwd){ showErr('suErr','All fields are required.'); return; }
+  if(pwd.length < 6){ showErr('suErr','Password must be at least 6 characters.'); return; }
+  const accs = JSON.parse(localStorage.getItem('lx_accs')||'{}');
+  if(accs[email]){ showErr('suErr','Email already registered. Sign in instead.'); return; }
+  accs[email] = {name, pwd: btoa(pwd)};
+  localStorage.setItem('lx_accs', JSON.stringify(accs));
+  S.user = {name, email};
+  localStorage.setItem('lx_user', JSON.stringify(S.user));
+  closeAuth(); renderLoggedIn();
+  toast('Account created! Welcome, '+name.split(' ')[0]+'! 🎉', 'green');
+}
+function showErr(id, msg){ const e = document.getElementById(id); e.textContent=msg; e.style.display=msg?'block':'none'; }
+function doLogout(){
+  S.user = null; localStorage.removeItem('lx_user');
+  document.getElementById('navRight').innerHTML = `
+    <button class="nbtn nbtn-ghost" id="loginBtn">Log In</button>
+    <button class="nbtn nbtn-gold" id="signupBtn">Sign Up Free</button>`;
+  document.getElementById('loginBtn').onclick = () => openAuth('login');
+  document.getElementById('signupBtn').onclick = () => openAuth('signup');
+  goTab('home'); toast('Logged out.', '');
+}
+function renderLoggedIn(){
+  const init = S.user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('navRight').innerHTML = `
+    <div class="uchip" tabindex="0">
+      <div class="uav">${init}</div>
+      <span class="utxt">${esc(S.user.name.split(' ')[0])}</span>
+      <div class="umenu">
+        <div class="uminfo"><div class="umname">${esc(S.user.name)}</div><div class="umemail">${esc(S.user.email)}</div></div>
+        <div class="umitem" onclick="goTab('dashboard')">📊 My Dashboard</div>
+        <div class="umitem" onclick="goTab('analyze')">⚖️ New Analysis</div>
+        <div class="umitem red" onclick="doLogout()">🚪 Log Out</div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════
+function setupFileUpload(){
+  const dz = document.getElementById('dropZone');
+  const fi = document.getElementById('fileInput');
+  fi.addEventListener('change', e => { if(e.target.files[0]) loadFile(e.target.files[0]); });
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+}
+function loadFile(f){
+  S.fileName = f.name;
+  S.fileText = '';
+  const reader = new FileReader();
+  reader.onload = e => { S.fileText = e.target.result; renderFileList(); document.getElementById('analyzeBtn').disabled = false; };
+  reader.readAsText(f);
+}
+function renderFileList(){
+  const fl = document.getElementById('fileList'); fl.innerHTML = '';
+  if(!S.fileName) return;
+  const d = document.createElement('div'); d.className = 'fitem';
+  d.innerHTML = `<span>📄</span><span class="fin">${esc(S.fileName)}</span><span class="fsz">${(S.fileText.length/1000).toFixed(0)}k chars</span><button class="frm">✕</button>`;
+  d.querySelector('.frm').onclick = () => { S.fileText=''; S.fileName=''; fl.innerHTML=''; document.getElementById('analyzeBtn').disabled=true; };
+  fl.appendChild(d);
+}
+function getOpts(){
+  const o = {};
+  document.querySelectorAll('.olist input[type=checkbox]').forEach(cb => { o[cb.dataset.key] = cb.checked; });
+  return o;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLASSIFICATION (client-side keyword scoring)
+// ═══════════════════════════════════════════════════════
+const CLASS_KW = {
+  federal_bill:["h.r.","be it enacted","reconciliation","sec.","title i","title ii","appropriates","house of representatives"],
+  executive_order:["executive order","by the authority vested in me as president","presidential memorandum"],
+  court_ruling:["plaintiff","defendant","appellant","appellee","hereby ordered","opinion","dissent","judgment"],
+  nda:["non-disclosure","confidentiality agreement","nda","proprietary information","confidential information"],
+  employment_contract:["employment agreement","offer letter","at-will","base salary","severance","non-compete"],
+  lease:["lease agreement","landlord","tenant","monthly rent","security deposit","lessee","lessor"],
+  terms_of_service:["terms of service","terms and conditions","privacy policy","by using this","user agreement"],
+  i485:["i-485","adjustment of status","form i-485","lawful permanent resident"],
+  naturalization:["n-400","naturalization","oath of allegiance","form n-400"],
+  asylum:["i-589","asylum","withholding of removal","persecution","form i-589"],
+  will_trust:["last will and testament","trust agreement","testator","executor","trustee","bequest"],
+  power_of_attorney:["power of attorney","attorney-in-fact","principal","durable power"],
+  eviction_notice:["notice to pay rent","unlawful detainer","notice to quit","3-day notice","three-day notice"],
+  tax_form:["w-2","form 1040","1099","internal revenue service","federal income tax withheld"],
+  mortgage:["mortgage","deed of trust","promissory note","lender","borrower","foreclosure"],
+  federal_act:["public law","u.s.c.","united states code","codified at","stat."],
+};
+const DOC_LABELS = {
+  federal_bill:"Federal Bill or Proposed Legislation",federal_act:"Federal Act / Enacted Law",
+  executive_order:"Executive Order",nda:"Non-Disclosure Agreement",
+  employment_contract:"Employment Contract",lease:"Lease or Rental Agreement",
+  i485:"I-485 Adjustment of Status (Green Card)",naturalization:"N-400 Naturalization Application",
+  asylum:"I-589 Asylum Application",will_trust:"Will or Trust Document",
+  power_of_attorney:"Power of Attorney",eviction_notice:"Eviction Notice",
+  tax_form:"Tax Form (W-2/1040/1099)",mortgage:"Mortgage / Deed of Trust",
+  terms_of_service:"Terms of Service / Privacy Policy",
+  federal_regulation:"Federal Regulation",court_ruling:"Court Ruling",general:"Legal Document",
+};
+function classifyDocument(text){
+  const tl = text.slice(0,4000).toLowerCase();
+  const scores = {};
+  for(const [cls, kws] of Object.entries(CLASS_KW)){
+    const s = kws.filter(kw => tl.includes(kw)).length;
+    if(s) scores[cls] = s;
+  }
+  if(Object.keys(scores).length){
+    const best = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
+    if(best[1] >= 2) return best[0];
+  }
+  return 'general';
+}
+
+// ═══════════════════════════════════════════════════════
+//  RETRIEVAL (TF-IDF client-side RAG)
+// ═══════════════════════════════════════════════════════
+const STOP = new Set(["the","and","for","that","this","with","are","not","its","has","shall","will","may","been","have","from","any","all","such","each","said","upon","under","within","thereof","herein","pursuant","section","article"]);
+function tokenize(t){ return (t.toLowerCase().match(/\b[a-z]{3,}\b/g)||[]).filter(w=>!STOP.has(w)); }
+function retrieveContext(docText, docClass, topK=5){
+  const qWords = new Set(tokenize(docText.slice(0,3000)));
+  const scored = [];
+  for(const doc of CORPUS){
+    const boost = doc.doc_class === docClass ? 2.0 : 1.0;
+    const words = doc.text.split(/\s+/);
+    for(let i=0;i<words.length;i+=320){
+      const chunk = words.slice(i,i+400).join(' ');
+      const cWords = tokenize(chunk);
+      const cSet = new Set(cWords);
+      const ov = [...qWords].filter(w=>cSet.has(w)).length;
+      if(ov>0) scored.push({score:(ov/Math.sqrt(cWords.length))*boost, chunk});
+    }
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  const seen=new Set(), out=[];
+  for(const {chunk} of scored){
+    const sig=chunk.slice(0,55);
+    if(!seen.has(sig)){seen.add(sig);out.push(chunk);if(out.length>=topK)break;}
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CALL GROQ  (OpenAI-compatible, free tier, CORS-enabled)
+// ═══════════════════════════════════════════════════════
+async function callHF(prompt, maxNew=900){
+  if(!S.hfKey) throw new Error('No Groq API key set. Please refresh and enter your key.');
+
+  const resp = await fetch(GROQ_API, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + S.hfKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [{ role: 'user', content: prompt.trim() }],
+      max_tokens: maxNew,
+      temperature: 0.3,
+      top_p: 0.9,
+    }),
+  });
+
+  if(!resp.ok){
+    const err = await resp.json().catch(()=>({}));
+    const msg = err.error?.message || `API error ${resp.status}`;
+    if(resp.status === 401) throw new Error('Invalid Groq API key. Please check and re-enter it.');
+    if(resp.status === 429) throw new Error('Rate limit hit. Wait a moment and try again.');
+    throw new Error(msg);
+  }
+
+  const data = await resp.json();
+  const text = data.choices?.[0]?.message?.content;
+  if(!text) throw new Error('Unexpected response from Groq API.');
+  return text.trim();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ANALYZE  — section by section (avoids token limits)
+// ═══════════════════════════════════════════════════════
+async function runAnalysis(){
+  if(!S.hfKey){
+    document.getElementById('apiKeyModal').classList.remove('hidden');
+    toast('Please enter your Groq API key first.', 'red');
+    return;
+  }
+  if(!S.fileText){ toast('Please upload a document first.', 'red'); return; }
+
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('btnTxt').textContent = 'Analyzing…';
+  S.chatHistory = [];
+  showLoading();
+
+  try{
+    const docClass  = classifyDocument(S.fileText);
+    S.docClass      = docClass;
+    const label     = DOC_LABELS[docClass] || 'Legal Document';
+    const ctxChunks = retrieveContext(S.fileText, docClass, 4);
+    const ctx       = ctxChunks.slice(0,3).join('\n\n').slice(0,1800);
+
+    // Trim doc to fit context window — Mistral-7B has ~4k token window
+    const MAX_DOC = 2800;
+    const docSnip = S.fileText.length > MAX_DOC
+      ? S.fileText.slice(0, 2400) + '\n\n[...document continues, showing key opening section...]'
+      : S.fileText;
+
+    const opts = getOpts();
+    const result = { doc_type: label, doc_class: docClass, doc_title: '' };
+
+    // ── Each section is a separate LLM call to stay within token limits ──
+
+    if(opts.summary){
+      updateStep(1);
+      const raw = await callHF(
+        `You are a legal analyst. Analyze this ${label} document and write a 4-5 sentence plain-English executive summary. Be SPECIFIC — name actual parties, dollar amounts, dates, and provisions from the document. No generic boilerplate.
+
+RELEVANT LEGAL CONTEXT:
+${ctx}
+
+DOCUMENT:
+${docSnip}
+
+Write only the summary paragraph, nothing else:`
+      );
+      result.executive_summary = raw.replace(/^(summary|executive summary)[:\s]*/i,'').trim();
+      result.doc_title = label + ' Analysis';
+    }
+
+    if(opts.keypoints){
+      updateStep(2);
+      const raw = await callHF(
+        `You are a legal analyst reviewing a ${label}. List 5 key provisions, obligations, or rights from this document. Format as a numbered list. Each item: short title (bold with **) then one sentence detail citing specific amounts, dates, or parties from the document.
+
+DOCUMENT:
+${docSnip}
+
+Numbered list of 5 key points:`
+      );
+      result.key_points = parseNumberedList(raw);
+    }
+
+    if(opts.risks){
+      updateStep(3);
+      const raw = await callHF(
+        `You are a legal risk analyst reviewing a ${label}. Identify 4 specific legal risks from this document. Format as a numbered list. Each: "RISK NAME [HIGH/MEDIUM/LOW]: one sentence describing the specific risk citing actual clauses or provisions."
+
+DOCUMENT:
+${docSnip}
+
+Numbered list of 4 risks with levels:`
+      );
+      result.risk_assessment = parseRiskList(raw);
+    }
+
+    if(opts.nuances){
+      updateStep(4);
+      const raw = await callHF(
+        `You are a legal analyst. Identify 4 non-obvious legal nuances or red flags in this ${label} that a non-lawyer would likely miss — such as hidden triggers, unusual definitions, auto-renewals, clawbacks, or buried exceptions. Format as a numbered list. Each: "NUANCE NAME: one sentence explanation."
+
+DOCUMENT:
+${docSnip}
+
+Numbered list of 4 nuances:`
+      );
+      result.legal_nuances = parseNuanceList(raw);
+    }
+
+    if(opts.actions){
+      result.suggested_actions = ACTIONS[docClass] || ACTIONS.general;
+    }
+
+    S.lastAnalysis = result;
+    saveHistory(result);
+    renderResults(result, opts);
+
+  } catch(err){
+    showError(err.message);
+  } finally {
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('btnTxt').textContent = 'Re-Analyze';
+    document.getElementById('btnIcon').textContent = '🔄';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════════════
+async function chatCall(question){
+  if(!S.hfKey) return 'Please refresh the page and enter your Groq API key to use chat.';
+  const label = DOC_LABELS[S.docClass] || 'Legal Document';
+  const ctxChunks = retrieveContext(question + ' ' + S.fileText.slice(0,300), S.docClass, 2);
+  const ctx = ctxChunks.join('\n\n').slice(0,800);
+  const history = S.chatHistory.slice(-4).map(h=>`${h.role==='user'?'User':'Assistant'}: ${h.content}`).join('\n');
+
+  const prompt = `You are LexisAI, a legal assistant. You analyzed a ${label}. Answer the user's question based ONLY on the document below. Be concise (2-3 sentences). Cite specific provisions when relevant. Note you are not a licensed attorney.
+
+DOCUMENT EXCERPT:
+${S.fileText.slice(0,2000)}
+
+LEGAL CONTEXT:
+${ctx}
+
+${history ? 'PREVIOUS:\n'+history+'\n' : ''}
+User: ${question}
+
+Answer:`;
+
+  return callHF(prompt, 300);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PARSERS (convert raw LLM text → structured data)
+// ═══════════════════════════════════════════════════════
+function parseNumberedList(raw){
+  const lines = raw.split('\n').filter(l => /^\d+[\.\)]/.test(l.trim()));
+  if(!lines.length){
+    // Fallback: split by sentences
+    return raw.split(/\n/).filter(l=>l.trim().length>20).slice(0,6).map(l=>{
+      const clean = l.replace(/^\d+[\.\)]\s*/,'').trim();
+      const parts = clean.split(/[:\-–]/);
+      return {point: (parts[0]||'Key Point').replace(/\*+/g,'').trim().slice(0,60), detail: (parts.slice(1).join(' ')||clean).trim().slice(0,180)};
+    });
+  }
+  return lines.slice(0,7).map(l=>{
+    const clean = l.replace(/^\d+[\.\)]\s*/,'').trim();
+    const boldMatch = clean.match(/\*\*(.+?)\*\*/);
+    const point = boldMatch ? boldMatch[1] : clean.split(/[:\-–]/)[0].trim();
+    const detail = boldMatch ? clean.replace(/\*\*(.+?)\*\*\s*[:\-–]?\s*/,'') : clean.split(/[:\-–]/).slice(1).join(' ').trim();
+    return {point: point.slice(0,60), detail: (detail||clean).trim().slice(0,180)};
+  });
+}
+
+function parseRiskList(raw){
+  const lines = raw.split('\n').filter(l=>/^\d+[\.\)]/.test(l.trim())||/\[(HIGH|MEDIUM|LOW)\]/i.test(l));
+  const result = [];
+  for(const line of lines.slice(0,6)){
+    const clean = line.replace(/^\d+[\.\)]\s*/,'').trim();
+    const levelMatch = clean.match(/\[(HIGH|MEDIUM|LOW)\]/i);
+    const level = levelMatch ? levelMatch[1].toLowerCase() : (clean.toLowerCase().includes('high')?'high':clean.toLowerCase().includes('low')?'low':'medium');
+    const area = clean.split(/\[|\:/)[0].replace(/\*+/g,'').trim().slice(0,50);
+    const desc = clean.replace(/\[.*?\]/,'').replace(/^[^:]+:/,'').trim().slice(0,180);
+    result.push({area: area||'Risk', level, description: desc||clean.slice(0,180)});
+  }
+  return result.length ? result : [{area:'Legal Risk',level:'medium',description:raw.slice(0,180)}];
+}
+
+function parseNuanceList(raw){
+  const lines = raw.split('\n').filter(l=>/^\d+[\.\)]/.test(l.trim()));
+  if(!lines.length) return [{tag:'LEGAL NUANCE',detail:raw.slice(0,200)}];
+  return lines.slice(0,6).map(l=>{
+    const clean = l.replace(/^\d+[\.\)]\s*/,'').trim();
+    const parts = clean.split(/[:\-–]/);
+    return {tag: parts[0].replace(/\*+/g,'').trim().toUpperCase().slice(0,40), detail: parts.slice(1).join(' ').trim().slice(0,200)||clean.slice(0,200)};
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOADING UI
+// ═══════════════════════════════════════════════════════
+let _loadTimer;
+function showLoading(){
+  document.getElementById('rcol').innerHTML = `
+    <div class="lwrap">
+      <div class="spin"></div>
+      <p style="color:var(--text2);font-size:.84rem">Running RAG pipeline via Groq (Llama 3.1)…</p>
+      <p style="color:var(--text3);font-size:.73rem;margin-top:.3rem">Groq's LPU hardware typically responds in 2–5 seconds</p>
+      <div class="lsteps">
+        <div class="ls active" id="ls0">🔎 Classifying document type</div>
+        <div class="ls" id="ls1">📖 Retrieving legal corpus context</div>
+        <div class="ls" id="ls2">📋 Generating summary & key points</div>
+        <div class="ls" id="ls3">⚠️ Detecting risks & nuances</div>
+        <div class="ls" id="ls4">✍️ Finalizing analysis</div>
+      </div>
+    </div>`;
+  let i=0;
+  clearInterval(_loadTimer);
+  _loadTimer = setInterval(()=>{
+    const prev=document.getElementById('ls'+(i-1));
+    if(prev){prev.classList.remove('active');prev.classList.add('done');}
+    const cur=document.getElementById('ls'+i);
+    if(cur) cur.classList.add('active');
+    if(i>=4) clearInterval(_loadTimer); else i++;
+  }, 5000); // slower — HF calls take longer
+}
+function updateStep(n){
+  for(let i=0;i<n;i++){
+    const prev=document.getElementById('ls'+i);
+    if(prev){prev.classList.remove('active');prev.classList.add('done');}
+  }
+  const cur=document.getElementById('ls'+n);
+  if(cur){cur.classList.remove('done');cur.classList.add('active');}
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER RESULTS
+// ═══════════════════════════════════════════════════════
+function renderResults(data, opts){
+  clearInterval(_loadTimer);
+  let html = `
+    <div class="rmeta">
+      <h2>Analysis Results</h2>
+      <div style="display:flex;gap:.38rem;flex-wrap:wrap;align-items:center">
+        ${data.doc_type?`<span class="tag tgold">${esc(data.doc_type)}</span>`:''}
+        <span class="tag tg">🕐 Just now</span>
+        <span class="rbadge">🧠 RAG · Groq Llama 3.1</span>
+      </div>
+    </div>
+    <div class="dcinfo">📂 Classified as: <strong>${esc(data.doc_type||'Legal Document')}</strong> — grounded in retrieved legal corpus</div>`;
+
+  if(opts.summary && data.executive_summary){
+    html+=`<div class="rcard"><div class="rch">📋 Executive Summary</div><div class="rcb"><p class="etext">${esc(data.executive_summary)}</p></div></div>`;
+  }
+  if(opts.keypoints && data.key_points?.length){
+    const items=data.key_points.map((k,i)=>`<li class="kpi"><span class="kpn">${i+1}</span><div><strong>${esc(k.point)}</strong><br/><span style="color:var(--text2);font-size:.77rem">${esc(k.detail)}</span></div></li>`).join('');
+    html+=`<div class="rcard"><div class="rch">📌 Key Provisions & Obligations</div><div class="rcb"><ul class="kpl">${items}</ul></div></div>`;
+  }
+  if(opts.risks && data.risk_assessment?.length){
+    const items=data.risk_assessment.map(r=>{
+      const rc=r.level==='high'?'rh':r.level==='medium'?'rm':'rl';
+      const bc=r.level==='high'?'bh':r.level==='medium'?'bm':'bl';
+      return `<div class="ri ${rc}"><div class="rih"><span class="ril">${esc(r.area)}</span><span class="bd ${bc}">${(r.level||'medium').toUpperCase()}</span></div><div class="rid">${esc(r.description)}</div></div>`;
+    }).join('');
+    html+=`<div class="rcard"><div class="rch">⚠️ Risk Assessment</div><div class="rcb"><div class="rgrid">${items}</div></div></div>`;
+  }
+  if(opts.nuances && data.legal_nuances?.length){
+    const items=data.legal_nuances.map(n=>`<div class="nui"><div class="nut">${esc(n.tag)}</div><div style="color:var(--text2);font-size:.79rem">${esc(n.detail)}</div></div>`).join('');
+    html+=`<div class="rcard"><div class="rch">🔍 Legal Nuances & Red Flags</div><div class="rcb"><div class="nul">${items}</div></div></div>`;
+  }
+  if(opts.actions && data.suggested_actions?.length){
+    const items=data.suggested_actions.map(a=>{
+      const pc=a.priority==='high'?'ph-h':a.priority==='medium'?'pm-m':'pl-l';
+      return `<div class="aci"><div class="acion">${esc(a.icon||'📋')}</div><div class="acbd"><div class="act">${esc(a.title)}</div><div class="acd">${esc(a.description)}</div></div><span class="acp ${pc}">${(a.priority||'').toUpperCase()}</span></div>`;
+    }).join('');
+    html+=`<div class="rcard"><div class="rch">🗺️ Suggested Actions</div><div class="rcb"><div class="acl">${items}</div></div></div>`;
+  }
+  if(opts.chat){
+    html+=`<div class="rcard cwrap"><div class="rch">💬 Ask Questions About This Document</div>
+      <div class="cmsgs" id="chatMsgs">
+        <div class="cm cai"><div class="cav">⚖</div><div class="cbub">I've analyzed your document. Ask me anything — "What are the work requirements?", "What's the penalty for breach?", "When does this expire?"</div></div>
+      </div>
+      <div class="cfoot">
+        <input class="cin" id="chatIn" type="text" placeholder="Ask about this specific document…"/>
+        <button class="csnd" id="chatSend">➤</button>
+      </div>
+    </div>`;
+    setupChat();
+  }
+  document.getElementById('rcol').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHAT UI
+// ═══════════════════════════════════════════════════════
+function setupChat(){
+  // Re-query after innerHTML set
+  setTimeout(()=>{
+    const inp = document.getElementById('chatIn');
+    const btn = document.getElementById('chatSend');
+    const msgs = document.getElementById('chatMsgs');
+    if(!inp||!btn||!msgs) return;
+
+    async function send(){
+      const q = inp.value.trim(); if(!q) return;
+      inp.value=''; btn.disabled=true;
+      appendMsg('user',q,msgs);
+      S.chatHistory.push({role:'user',content:q});
+      const bub = appendMsg('ai','…',msgs);
+      try{
+        const reply = await chatCall(q);
+        bub.textContent = reply;
+        S.chatHistory.push({role:'assistant',content:reply});
+      }catch(e){ bub.textContent='Error: '+e.message; }
+      btn.disabled=false;
+      msgs.scrollTop=msgs.scrollHeight;
+    }
+    btn.addEventListener('click',send);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+  }, 100);
+}
+function appendMsg(role,text,msgs){
+  const d=document.createElement('div');
+  d.className=`cm c${role==='ai'?'ai':'usr'}`;
+  d.innerHTML=`<div class="cav">${role==='ai'?'⚖':'👤'}</div><div class="cbub">${esc(text)}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop=msgs.scrollHeight;
+  return d.querySelector('.cbub');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HARDCODED LIBRARY ANALYSES  (instant, no API needed)
+// ═══════════════════════════════════════════════════════
+const LIBRARY_ANALYSES = {
+  obbb: {
+    doc_type:'Federal Bill or Proposed Legislation', doc_class:'federal_bill',
+    doc_title:'One Big Beautiful Bill (H.R. 1) Analysis',
+    executive_summary:'H.R. 1, the One Big Beautiful Bill Act, passed the House 215-214 on May 22, 2025 and represents the most sweeping fiscal legislation since the 2017 Tax Cuts and Jobs Act. The bill permanently extends TCJA individual tax rates (top rate 37%), raises the standard deduction to $30,000 for married filers, and temporarily excludes up to $25,000 in tip income and $10,000 in overtime pay from gross income for eligible workers. It imposes significant Medicaid restructuring — including an 80-hour/month work requirement for able-bodied adults and a reduction in the federal matching rate for ACA expansion states from 90% to 80% — and eliminates enhanced ACA premium subsidies after December 31, 2025. The bill repeals major clean energy credits (EV credits, Clean Electricity Investment Credit) and appropriates $46.5 billion for southern border infrastructure. The CBO estimates it will increase deficits by approximately $3.8 trillion over the 2026–2035 budget window.',
+    key_points:[
+      {point:'Permanent TCJA Extension',detail:'Individual income tax rates from 2017 permanently locked in; top rate remains 37% for incomes over $600,000 MFJ. Standard deduction raised to $30,000 (MFJ) and $15,000 (single).'},
+      {point:'Child Tax Credit Increase',detail:'CTC raised to $2,500 per qualifying child for 2025–2028 (reverts to $2,000 after). Refundable portion capped at $1,700. Phase-out begins at $400,000 MFJ.'},
+      {point:'Medicaid Work Requirements',detail:'Able-bodied adults 18–64 without dependents must complete 80 hours/month of work, training, or community service to maintain Medicaid eligibility, effective January 1, 2027.'},
+      {point:'Student Loan Overhaul',detail:'All IDR plans consolidated into new Repayment Assistance Plan (RAP): 10% of discretionary income, forgiveness after 30 years. SAVE, PAYE, and IBR closed to new enrollers after July 1, 2026.'},
+      {point:'Clean Energy Credit Repeal',detail:'EV tax credits, Clean Electricity Production/Investment Credits, and Energy Efficient Home Improvement Credits all repealed effective December 31, 2025.'},
+    ],
+    risk_assessment:[
+      {area:'ACA Subsidy Cliff',level:'high',description:'Enhanced premium subsidies expire Dec 31, 2025. Millions of marketplace enrollees may face sharp premium increases in 2026 unless Congress acts.'},
+      {area:'Medicaid Eligibility Disruption',level:'high',description:'Work requirement implementation by Jan 2027 is expected to remove millions from Medicaid rolls, with disproportionate impact on rural and part-time workers.'},
+      {area:'Deficit Expansion',level:'high',description:'CBO scores a $3.8 trillion deficit increase over 10 years, raising debt ceiling by $4 trillion — potential bond market and interest rate consequences.'},
+      {area:'SALT Cap Complexity',level:'medium',description:'SALT deduction temporarily raised to $30,000 for incomes under $500,000 (2025–2029) but reverts to $10,000 — creates planning uncertainty for high-tax-state residents.'},
+    ],
+    legal_nuances:[
+      {tag:'TIPS EXCLUSION SUNSET',detail:'The tip income exclusion is temporary (2025–2028 only) and not permanent. Workers relying on it for long-term tax planning face a cliff after 2028.'},
+      {tag:'PSLF PENALTY',detail:'Public Service Loan Forgiveness timeline extended from 10 to 15 years, and forgiveness capped at $75k (undergrad) / $125k (grad) — a significant reduction for high-balance borrowers.'},
+      {tag:'10-YEAR CHIPS CLAWBACK',detail:'CHIPS Act recipients who expand chip manufacturing in China, Russia, or other countries of concern within 10 years must repay grants in full with interest.'},
+      {tag:'DIVERSITY VISA ELIMINATION',detail:'The Diversity Visa Lottery is permanently eliminated, cutting off a major legal immigration pathway for ~55,000 people per year.'},
+    ],
+    suggested_actions: ACTIONS.federal_bill,
+  },
+  aca: {
+    doc_type:'Federal Act / Enacted Law', doc_class:'federal_act',
+    doc_title:'Affordable Care Act — Key Provisions Analysis',
+    executive_summary:'The Patient Protection and Affordable Care Act (Public Law 111-148), signed March 23, 2010, is the foundational statute governing the U.S. health insurance market. It prohibits lifetime and annual benefit limits on essential health benefits (EHBs), extends dependent coverage to age 26, and bans pre-existing condition exclusions and discriminatory underwriting. The law creates Health Benefit Exchanges offering four metal tiers (Bronze 60% through Platinum 90% actuarial value) and provides premium tax credits for households earning 100–400% of the Federal Poverty Level. The Medicaid expansion to 138% FPL is optional for states after NFIB v. Sebelius (2012); as of 2024, 41 states and D.C. have expanded. The individual mandate penalty was reduced to $0 by the Tax Cuts and Jobs Act effective January 1, 2019.',
+    key_points:[
+      {point:'Essential Health Benefits (10 Categories)',detail:'All qualified health plans must cover: ambulatory care, emergency services, hospitalization, maternity/newborn care, mental health/substance use, prescriptions, rehabilitative services, labs, preventive care, and pediatric services.'},
+      {point:'Premium Tax Credits',detail:'Households earning 100–400% FPL (extended beyond 400% through enhanced subsidies) receive credits. Contribution ranges from ~2.07% of income at 100% FPL to 9.78% at 400% FPL.'},
+      {point:'Medicaid Expansion (Optional)',detail:'States may expand Medicaid to 138% FPL. Federal government pays 100% through 2016, phasing to 90% by 2020 and beyond. 41 states + DC have expanded as of 2024.'},
+      {point:'Guaranteed Issue & No Pre-Existing Exclusions',detail:'Insurers must offer coverage to all applicants and cannot deny or limit coverage based on medical history or health status.'},
+      {point:'Employer Mandate',detail:'Employers with 50+ full-time equivalent employees must offer minimum essential coverage or face penalties. Individual mandate reduced to $0 effective January 1, 2019.'},
+    ],
+    risk_assessment:[
+      {area:'Enhanced Subsidy Expiration',level:'high',description:'Enhanced ACA premium subsidies (extended beyond 400% FPL) expire Dec 31, 2025 under H.R. 1 — millions of enrollees face premium increases unless re-authorized.'},
+      {area:'State Non-Expansion Gap',level:'medium',description:'9 states have not expanded Medicaid, leaving an estimated 2 million adults in the coverage gap (earn too much for Medicaid, too little for marketplace subsidies).'},
+      {area:'Employer Coverage Adequacy',level:'medium',description:'Employer mandate requires "minimum essential coverage" but not necessarily affordable or comprehensive coverage — employees may still face high out-of-pocket costs.'},
+      {area:'Network Adequacy',level:'low',description:'ACA does not mandate specific provider network standards; narrow network plans can limit access to specialists even when the plan is compliant.'},
+    ],
+    legal_nuances:[
+      {tag:'NFIB V. SEBELIUS IMPACT',detail:'The Supreme Court made Medicaid expansion optional for states in 2012, creating the coverage gap in non-expansion states that persists today.'},
+      {tag:'GRANDFATHERED PLAN EXEMPTIONS',detail:'Plans that existed before March 23, 2010 may be "grandfathered" and exempt from certain ACA requirements including preventive care mandates.'},
+      {tag:'ESSENTIAL HEALTH BENEFITS FLEXIBILITY',detail:'States can substitute benefits within the 10 EHB categories using a benchmark plan — coverage details vary significantly by state.'},
+      {tag:'ZERO-DOLLAR MANDATE',detail:'The individual mandate still exists in law but the penalty is $0. This creates ongoing constitutional uncertainty and some states have enacted their own mandates.'},
+    ],
+    suggested_actions: ACTIONS.general,
+  },
+  gdpr: {
+    doc_type:'Federal Regulation', doc_class:'federal_regulation',
+    doc_title:'GDPR — General Data Protection Regulation Analysis',
+    executive_summary:'The General Data Protection Regulation (Regulation EU 2016/679), effective May 25, 2018, is the European Union\'s comprehensive data privacy law and the global benchmark for privacy regulation. It applies to any organization — regardless of location — that processes personal data of EU residents, making it directly relevant to virtually every U.S. company with European customers or employees. GDPR requires a lawful basis for all data processing, grants individuals robust rights (access, erasure, portability, and objection), and mandates breach notification to supervisory authorities within 72 hours. Maximum fines reach €20 million or 4% of global annual turnover, whichever is greater — the Meta €1.2 billion fine in 2023 represents the largest GDPR penalty to date. The Schrems II decision (2020) invalidated the EU-US Privacy Shield, forcing companies to use Standard Contractual Clauses for transatlantic data transfers.',
+    key_points:[
+      {point:'Six Lawful Bases for Processing',detail:'Organizations must identify a lawful basis before processing: consent, contract performance, legal obligation, vital interests, public task, or legitimate interests. Consent must be freely given, specific, and withdrawable.'},
+      {point:'Data Subject Rights',detail:'EU residents have rights to: access their data (within 30 days, free), rectification, erasure ("right to be forgotten"), restriction, data portability in machine-readable format, and to object to processing.'},
+      {point:'72-Hour Breach Notification',detail:'Data breaches likely to cause harm must be reported to the relevant supervisory authority within 72 hours of discovery. High-risk breaches must also be communicated to affected individuals without undue delay.'},
+      {point:'Tiered Penalty Structure',detail:'Tier 1 (procedural violations): up to €10M or 2% global turnover. Tier 2 (core principles violations): up to €20M or 4% global turnover. Notable fines: Meta €1.2B (2023), Amazon €746M (2021).'},
+      {point:'International Transfer Restrictions',detail:'Personal data may only be transferred outside the EU to countries with an "adequacy decision" or under Standard Contractual Clauses (SCCs) following the invalidation of Privacy Shield by Schrems II.'},
+    ],
+    risk_assessment:[
+      {area:'Consent Bundling',level:'high',description:'Bundling consent to data processing into general terms of service is invalid under GDPR — consent must be specific, granular, and separate from contract acceptance.'},
+      {area:'US-EU Data Transfers',level:'high',description:'Post-Schrems II, companies must rely on SCCs with documented transfer impact assessments — enforcement actions are increasing against companies with inadequate transfer mechanisms.'},
+      {area:'Breach Response Timeline',level:'high',description:'72-hour notification window is very tight — organizations without an incident response plan routinely miss the deadline, triggering regulatory scrutiny.'},
+      {area:'Legitimate Interests Overuse',level:'medium',description:'Using "legitimate interests" as a catch-all lawful basis without proper balancing tests is a common enforcement target, especially for marketing and profiling activities.'},
+    ],
+    legal_nuances:[
+      {tag:'EXTRATERRITORIAL REACH',detail:'GDPR applies to non-EU companies if they offer goods/services to EU residents OR monitor their behavior — a U.S.-only company with EU website visitors may be in scope.'},
+      {tag:'DATA PROCESSOR LIABILITY',detail:'GDPR holds both data controllers AND processors directly liable — cloud vendors, payroll processors, and analytics platforms have independent compliance obligations.'},
+      {tag:'RIGHT TO ERASURE LIMITS',detail:'The "right to be forgotten" is not absolute — it can be overridden by legal obligations, public interest, or freedom of expression, requiring a case-by-case balancing analysis.'},
+      {tag:'COOKIE CONSENT SPECIFICITY',detail:'Pre-ticked consent boxes, "accept all" dark patterns, and consent withdrawal being harder than consent are all specifically prohibited under GDPR guidance.'},
+    ],
+    suggested_actions: ACTIONS.general,
+  },
+  i485: {
+    doc_type:'I-485 Adjustment of Status (Green Card)', doc_class:'i485',
+    doc_title:'USCIS Form I-485 — Analysis',
+    executive_summary:'Form I-485 (Application to Register Permanent Residence or Adjust Status) is the primary form for obtaining a U.S. Green Card from within the United States. Eligibility requires physical presence in the U.S., an immediately available immigrant visa number, and admissibility. The filing fee is $1,440 for applicants aged 14–78, and required supporting documentation includes Form I-864 (Affidavit of Support), Form I-693 (sealed medical examination from a USCIS-approved civil surgeon), and the approved underlying immigrant petition. Critical warning: departing the U.S. after filing without an approved Form I-131 (Advance Parole) may be treated as abandonment of the application. Processing times range from 12 to 36+ months depending on category and field office. Making a false statement on the form is a federal crime punishable by up to 5 years imprisonment.',
+    key_points:[
+      {point:'$1,440 Filing Fee (Ages 14–78)',detail:'Fee includes biometrics. Under 14 or over 78: $950. Fee must be paid by check or money order to "U.S. Department of Homeland Security." Fee waivers available in limited circumstances.'},
+      {point:'Form I-693 Medical Exam Required',detail:'Must be completed by a USCIS-designated civil surgeon, submitted in a sealed envelope. The exam results are only valid for 2 years from the date of the civil surgeon\'s signature.'},
+      {point:'Advance Parole Before Any Travel',detail:'Do NOT leave the United States after filing I-485 without an approved I-131 (Advance Parole). Departure — even briefly to Canada or Mexico — may be treated as abandonment of your application.'},
+      {point:'Continuous Lawful Status Requirement',detail:'Most applicants must have maintained continuous lawful status since entry. Section 245(i) provides an exception for petitions filed on/before April 30, 2001, with a $1,000 penalty fee.'},
+      {point:'Employment Authorization (EAD)',detail:'File Form I-765 concurrently for an Employment Authorization Document, allowing you to work legally while I-485 is pending. File I-131 simultaneously for Advance Parole travel permission.'},
+    ],
+    risk_assessment:[
+      {area:'Unauthorized Departure / Abandonment',level:'high',description:'Leaving the U.S. without Advance Parole after filing I-485 results in automatic abandonment — there is no cure or appeal. The application is terminated.'},
+      {area:'Misrepresentation',level:'high',description:'Any false statement — even about minor matters — on the I-485 can result in permanent inadmissibility and criminal prosecution. Disclose everything; consult an attorney about anything unclear.'},
+      {area:'Unlawful Presence Accrual',level:'high',description:'Applicants who overstayed a visa may have accrued "unlawful presence" — 180+ days triggers a 3-year bar; 1 year+ triggers a 10-year bar upon departure.'},
+      {area:'Processing Delays',level:'medium',description:'USCIS processing times for I-485 range 12–36+ months. Employment authorization is critical during this window — file I-765 concurrently at the same time as I-485.'},
+    ],
+    legal_nuances:[
+      {tag:'VISA RETROGRESSION RISK',detail:'Even after filing, your priority date must remain "current" when USCIS is ready to adjudicate. If the Visa Bulletin retrogresses, your case may be placed on hold indefinitely.'},
+      {tag:'USCIS INTERVIEW WAIVER',detail:'Some I-485 applicants (especially employment-based) may have interviews waived — but an interview can always be scheduled at USCIS discretion with little notice.'},
+      {tag:'PUBLIC CHARGE RULE',detail:'USCIS evaluates whether an applicant is likely to become a public charge. Receipt of certain public benefits can negatively affect admissibility determinations.'},
+      {tag:'CONCURRENT FILING',detail:'In some categories, you can file I-485 concurrently with the underlying I-130 or I-140 petition when a visa number is immediately available — this can save months of processing time.'},
+    ],
+    suggested_actions: ACTIONS.i485,
+  },
+  n400: {
+    doc_type:'N-400 Naturalization Application', doc_class:'naturalization',
+    doc_title:'USCIS Form N-400 — Analysis',
+    executive_summary:'Form N-400 (Application for Naturalization) is the form used by lawful permanent residents to apply for U.S. citizenship. The general 5-year rule requires: being at least 18, holding LPR status for 5 years, 30 months of physical presence in the U.S. in the past 5 years, and 3 months of residence in the filing state. Spouses of U.S. citizens may qualify under a 3-year rule. The application requires demonstrating good moral character, passing an English test, and correctly answering 6 of 10 questions from the USCIS civics test (100 questions total). The filing fee is $760 ($0 for military applicants). A single absence from the U.S. of 6–12 months creates a presumption of broken continuous residence; absence over 12 months generally breaks it entirely unless a re-entry permit was obtained.',
+    key_points:[
+      {point:'5-Year vs 3-Year Eligibility',detail:'General rule: 5 years as LPR with 30 months physical presence. Married to U.S. citizen and living together: 3 years as LPR with 18 months physical presence. Military service may allow expedited naturalization.'},
+      {point:'$760 Filing Fee',detail:'$760 for most applicants. Reduced to $380 for household incomes below 400% of FPL. $0 for military applicants naturalizing under INA §328 or §329. No refund if application denied.'},
+      {point:'Civics & English Tests',detail:'Must correctly answer 6 of 10 randomly selected civics questions from the official 100-question list. Must demonstrate ability to read, write, and speak basic English. Study materials at uscis.gov/citizenship.'},
+      {point:'Good Moral Character (5 Years)',detail:'USCIS evaluates the 5 years preceding application. Permanent bars include murder conviction and aggravated felony. Temporary bars include unlawful acts, multiple convictions, controlled substance violations.'},
+      {point:'Travel Documentation Critical',detail:'Must list every single trip outside the U.S. for the past 5 years with exact entry/exit dates. Absences over 6 months create a presumption of abandonment of continuous residence.'},
+    ],
+    risk_assessment:[
+      {area:'Criminal History Bars',level:'high',description:'An aggravated felony conviction after November 29, 1990 is a permanent bar to naturalization — and certain crimes deemed "aggravated felonies" under immigration law are broader than their state-law definitions.'},
+      {area:'Selective Service Registration',level:'high',description:'Male applicants who were between 18–26 while a U.S. resident and did not register for Selective Service face a presumption of willful failure — which is a good moral character bar.'},
+      {area:'Tax Compliance',level:'high',description:'Failure to file or pay taxes is a good moral character issue. USCIS officers will directly ask about tax compliance. Resolve any outstanding tax obligations before filing.'},
+      {area:'Continuous Residence Documentation',level:'medium',description:'Without contemporaneous travel records (passport stamps, boarding passes, I-94 records), reconstructing a 5-year travel history is difficult and errors can lead to denial.'},
+    ],
+    legal_nuances:[
+      {tag:'50/20 & 55/15 ENGLISH EXEMPTIONS',detail:'Applicants who are 50+ years old and have been LPRs for 20+ years (50/20 rule) or 55+ with 15+ years (55/15 rule) may take the civics test in their native language with an interpreter.'},
+      {tag:'N-400 TRIGGERS DEPORTABILITY REVIEW',detail:'Filing N-400 prompts USCIS to review your entire immigration history — including grounds for deportability. Consult an attorney if you have any criminal history, immigration violations, or public benefits use.'},
+      {tag:'OATH OF ALLEGIANCE REQUIREMENTS',detail:'The Oath requires renouncing allegiance to foreign sovereigns and bearing arms for the U.S. Conscientious objectors may modify the Oath, but must demonstrate sincere belief.'},
+      {tag:'DENIAL APPEAL WINDOW',detail:'If denied, you have 30 days to request a hearing (Form N-336, $800 fee). If the hearing officer also denies, you may seek judicial review in federal district court.'},
+    ],
+    suggested_actions: ACTIONS.naturalization,
+  },
+  i589: {
+    doc_type:'I-589 Asylum Application', doc_class:'asylum',
+    doc_title:'USCIS Form I-589 — Analysis',
+    executive_summary:'Form I-589 (Application for Asylum and Withholding of Removal) allows individuals physically present in the United States to seek protection from persecution on account of race, religion, nationality, membership in a particular social group, or political opinion. The one-year filing deadline — measured from the applicant\'s last arrival in the United States — is a near-absolute bar with very limited exceptions (changed or extraordinary circumstances). The legal standard for asylum is a "well-founded fear" of persecution — meaning both a genuine subjective fear and an objective 10% or greater chance of persecution. Withholding of removal requires the higher standard of "more likely than not" (greater than 50%). Legal representation dramatically increases approval rates; applicants are strongly encouraged to retain an AILA-member immigration attorney.',
+    key_points:[
+      {point:'One-Year Filing Deadline',detail:'Must file within one year of last entry into the United States. Exceptions: changed circumstances (e.g., new law, change in home country conditions) or extraordinary circumstances (e.g., serious illness, ineffective assistance of counsel).'},
+      {point:'Five Protected Grounds',detail:'Asylum is available for persecution based on: race, religion, nationality, membership in a particular social group (PSG), or political opinion. PSG is the most litigated and complex ground.'},
+      {point:'Well-Founded Fear Standard',detail:'Applicant must show both subjective (genuine) fear and objective reasonableness. A 1-in-10 chance of persecution can satisfy the objective element. Past persecution creates a rebuttable presumption.'},
+      {point:'Employment Authorization After 180 Days',detail:'File Form I-765 180 days after the asylum application is pending (the "asylum clock"). The clock can be stopped by applicant-caused delays — be careful about continuances and late filings.'},
+      {point:'Path to Permanent Residence',detail:'One year after asylum grant, asylees may apply for lawful permanent residence (Green Card) via Form I-485. Derivative asylum is available for spouses and unmarried children under 21.'},
+    ],
+    risk_assessment:[
+      {area:'One-Year Deadline',level:'high',description:'Missing the one-year deadline — even by one day — is generally fatal to the asylum claim unless an exception applies. File immediately, even if evidence is incomplete.'},
+      {area:'Particular Social Group Definition',level:'high',description:'PSG claims are highly fact-specific and heavily litigated. The group must be socially distinct, defined with particularity, and persecution must be "on account of" the group — vague definitions are rejected.'},
+      {area:'Firm Resettlement Bar',level:'high',description:'An applicant who was firmly resettled in a third country before coming to the U.S. is ineligible for asylum. This can apply even to brief stays in certain countries.'},
+      {area:'Serious Non-Political Crime Bar',level:'high',description:'Committing a "serious non-political crime" outside the U.S. is an absolute bar to asylum. Even minor crimes in the U.S. can affect credibility and good moral character assessment.'},
+    ],
+    legal_nuances:[
+      {tag:'DEFENSIVE VS. AFFIRMATIVE',detail:'Affirmative asylum (filing proactively with USCIS) results in a non-adversarial interview. Defensive asylum (raised in removal proceedings) is adjudicated in adversarial immigration court — very different processes.'},
+      {tag:'CREDIBILITY IS EVERYTHING',detail:'Inconsistencies between the I-589, supporting documents, and oral testimony at interview/hearing are the most common basis for denial. Accuracy and consistency are paramount.'},
+      {tag:'CONFIDENTIALITY PROTECTIONS',detail:'USCIS is prohibited from disclosing the existence or content of an asylum application to the applicant\'s home country government. Do not discuss your case on public social media.'},
+      {tag:'CONVENTION AGAINST TORTURE',detail:'CAT protection (withholding of removal under CAT) requires showing it\'s more likely than not you would be tortured — there is no nexus requirement to a protected ground, and the bars are different from asylum bars.'},
+    ],
+    suggested_actions: ACTIONS.asylum,
+  },
+  nda: {
+    doc_type:'Non-Disclosure Agreement', doc_class:'nda',
+    doc_title:'Mutual NDA (Acme Technologies / BrightPath Ventures) — Analysis',
+    executive_summary:'This Mutual Non-Disclosure Agreement between Acme Technologies Inc. and BrightPath Ventures LLC, dated January 15, 2024, is a standard bilateral confidentiality agreement governing the parties\' exploration of a potential strategic partnership or acquisition. It defines Confidential Information broadly to include business plans, financial data, customer lists, trade secrets, source code, and marketing strategies, while excluding information that is publicly known, independently developed, or received from a third party without restriction. The agreement imposes a 3-year confidentiality term for general Confidential Information, with trade secret protections surviving indefinitely. Governed by Delaware law, the agreement requires prompt notice of unauthorized disclosure and allows for injunctive relief without bond in the event of breach.',
+    key_points:[
+      {point:'3-Year Confidentiality Term',detail:'General Confidential Information must be held in confidence for 3 years from January 15, 2024 (expires January 15, 2027). Trade secret obligations survive indefinitely with no expiration.'},
+      {point:'Broad Confidential Information Definition',detail:'Covers any information with commercial value including source code, product designs, customer lists, and financial data — both written and oral disclosures are covered.'},
+      {point:'Four Standard Exclusions',detail:'Information is not protected if: (a) publicly known, (b) already known to recipient before disclosure, (c) received from a third party without restriction, or (d) independently developed.'},
+      {point:'Injunctive Relief Without Bond',detail:'Both parties acknowledge that breach may cause irreparable harm — courts may grant emergency injunctive relief without requiring the moving party to post a financial bond.'},
+      {point:'Delaware Governing Law',detail:'Disputes governed by Delaware law in Wilmington courts. Delaware courts are sophisticated in business disputes and generally enforce NDA provisions strictly.'},
+    ],
+    risk_assessment:[
+      {area:'Overly Broad Definition',level:'medium',description:'"Any information with commercial value" is expansive — it could capture oral conversations or general industry knowledge. Consider whether specific categories should be excluded.'},
+      {area:'No Residuals Clause',level:'medium',description:'The NDA does not include a "residuals" clause allowing parties to use non-memorized general knowledge retained in employees\' minds — this can create risk in knowledge-intensive industries.'},
+      {area:'No Destruction Certification Timeline',level:'low',description:'The agreement requires return or destruction upon request but does not specify a deadline — best practice is to specify 10–30 business days.'},
+      {area:'Jurisdiction Risk',level:'low',description:'Both parties must litigate in Wilmington, Delaware — inconvenient for California-based BrightPath if a dispute arises, adding litigation cost and complexity.'},
+    ],
+    legal_nuances:[
+      {tag:'INDEFINITE TRADE SECRET PROTECTION',detail:'Trade secret obligations survive termination indefinitely — even after the 3-year term expires, parties remain bound by trade secret law (DTSA federally and state equivalents).'},
+      {tag:'MUTUAL vs. ONE-SIDED',detail:'This is a mutual (bilateral) NDA — both parties share obligations equally. One-sided NDAs are common when only one party discloses; verify this is appropriate for your situation.'},
+      {tag:'NO LICENSE GRANTED',detail:'Receiving Confidential Information does not grant any license, right, or interest in IP. Any actual business arrangement will require a separate license or partnership agreement.'},
+      {tag:'ORAL DISCLOSURE RISK',detail:'The agreement covers oral disclosures — every conversation about confidential business matters is potentially covered, even without written documentation.'},
+    ],
+    suggested_actions: ACTIONS.nda,
+  },
+  employment: {
+    doc_type:'Employment Contract', doc_class:'employment_contract',
+    doc_title:'NovaSpark Employment Agreement (Jordan Williams) — Analysis',
+    executive_summary:'This employment agreement between NovaSpark Inc. and Jordan M. Williams, effective March 1, 2024, governs an at-will Senior Software Engineer role at a base salary of $165,000 per year with a target bonus of 15% ($24,750, discretionary). The agreement grants 25,000 RSUs vesting over 4 years with a 1-year cliff. Notable restrictive covenants include a 12-month non-compete (compensated with $5,000), a 12-month non-solicitation of employees and customers, and an IP assignment clause that captures inventions created outside working hours if related to company business. All disputes are subject to binding JAMS arbitration with a class action waiver. Severance of 8 weeks is available only upon termination without cause and requires signing a release of claims.',
+    key_points:[
+      {point:'$165,000 Base + 15% Target Bonus',detail:'Base salary paid bi-weekly. Annual bonus target is $24,750 but is entirely discretionary — the company has no obligation to pay any bonus regardless of individual performance.'},
+      {point:'25,000 RSUs — 4-Year Vest, 1-Year Cliff',detail:'6,250 RSUs vest at the 12-month mark (March 1, 2025). Remaining 18,750 vest monthly over 36 months (~521/month). Unvested RSUs are forfeited upon departure.'},
+      {point:'12-Month Non-Compete',detail:'Employee cannot work for a competitor for 12 months in any market where NovaSpark operates. Compensated with $5,000. Enforceability depends heavily on California law — non-competes are generally void in CA under Bus. & Prof. Code §16600.'},
+      {point:'Broad IP Assignment',detail:'Company owns all inventions created during employment — including those created on personal time if related to company business or using company resources. Review carefully against prior inventions.'},
+      {point:'8-Week Severance (Conditional)',detail:'Only available upon termination without Cause. Requires signing a general release of claims — meaning you waive all legal claims against the company as a condition of receiving severance.'},
+    ],
+    risk_assessment:[
+      {area:'Non-Compete Enforceability',level:'high',description:'California Business & Professions Code §16600 renders employee non-compete clauses void in California. If Employee works primarily in CA, this clause is likely unenforceable — but fighting it requires legal action.'},
+      {area:'IP Assignment Scope',level:'high',description:'The moonlighting/personal-time IP assignment is very broad. If Employee has side projects, prior inventions, or open-source work, they should negotiate a "Prior Inventions" exhibit excluding specified work.'},
+      {area:'Bonus Discretion',level:'medium',description:'The bonus is entirely discretionary. Employee has no legal entitlement to any bonus even if NovaSpark is highly profitable or Employee performs exceptionally.'},
+      {area:'Arbitration + Class Waiver',level:'medium',description:'The class action waiver prevents joining collective actions with other employees (e.g., wage claims). Individual arbitration is expensive relative to the potential recovery.'},
+    ],
+    legal_nuances:[
+      {tag:'CALIFORNIA NON-COMPETE VOID',detail:'California courts routinely refuse to enforce employee non-competes under §16600 — but this requires litigation. The clause can still chill job searches through fear even if ultimately unenforceable.'},
+      {tag:'PRIOR INVENTIONS DISCLOSURE',detail:'If Employee has prior inventions they want to protect, they must disclose them in a "Schedule A" or prior inventions exhibit before signing — failure to do so risks the company claiming ownership.'},
+      {tag:'AT-WILL PLUS SEVERANCE',detail:'The at-will nature means termination can happen at any time. The 8-week severance is the only financial buffer — and it is conditioned on signing a release, which you may not want to do if you have a viable claim.'},
+      {tag:'RSU CLIFF RISK',detail:'If terminated before March 1, 2025 (the 1-year cliff), Employee receives zero RSUs — even after 11 months of employment. This is a significant financial exposure early in the role.'},
+    ],
+    suggested_actions: ACTIONS.employment_contract,
+  },
+  lease: {
+    doc_type:'Lease or Rental Agreement', doc_class:'lease',
+    doc_title:'California Residential Lease (Owens / Fernandez) — Analysis',
+    executive_summary:'This California Residential Lease Agreement covers 4521 Maple Grove Drive, Apt 3B, Los Angeles, CA 90025, between Daniel T. Owens (Landlord) and Alexis M. Fernandez (Tenant) for the period February 1, 2024 through January 31, 2025, at $2,850/month. The security deposit is $5,700 (2 months\' rent), which must be returned or itemized within 21 days of vacancy under California Civil Code §1950.5. The agreement includes a late fee of $142.50 (5%) if rent is received after the 5th. Early termination requires 60 days\' written notice and a two-month penalty ($5,700). The Landlord must provide 24-hour written notice before non-emergency entry under California Civil Code §1954, and must maintain the unit in habitable condition under CC §1941. The property may be subject to the Los Angeles Rent Stabilization Ordinance.',
+    key_points:[
+      {point:'$2,850/Month Rent — Due 1st, Late After 5th',detail:'Late fee is 5% of monthly rent ($142.50) or $75, whichever is greater, if not received by the 5th. $35 returned check fee. Repeated late payment can be grounds for eviction.'},
+      {point:'$5,700 Security Deposit — 21-Day Return Deadline',detail:'Under California Civil Code §1950.5, Landlord must return the full deposit OR provide an itemized written statement of deductions within 21 days of Tenant vacating. Normal wear and tear is not deductible.'},
+      {point:'Early Termination — 60 Days Notice + $5,700 Fee',detail:'If Tenant leaves before January 31, 2025, they owe 60 days written notice, a $5,700 early termination fee, and rent through the date a replacement tenant is found.'},
+      {point:'Landlord Entry — 24-Hour Written Notice Required',detail:'California Civil Code §1954 requires the Landlord to give 24-hour advance written notice before non-emergency entry, only between 8 AM and 8 PM. Emergency entry requires no notice.'},
+      {point:'LA RSO May Apply',detail:'The lease notes this property may be subject to the Los Angeles Rent Stabilization Ordinance, which can cap rent increases and limit eviction grounds — Tenant should verify applicability with the LA Housing Dept.'},
+    ],
+    risk_assessment:[
+      {area:'Security Deposit Dispute',level:'high',description:'Without photographic documentation of the unit\'s condition at move-in, Tenant has little evidence to dispute deductions. Landlord may claim pre-existing damage was caused by Tenant.'},
+      {area:'Unauthorized Occupants / Subletting',level:'high',description:'Only Alexis M. Fernandez is authorized to reside in the unit. Having another person stay regularly without Landlord consent can be grounds for eviction even if no sublease agreement exists.'},
+      {area:'LA RSO Protection Gap',level:'medium',description:'If the property is RSO-covered, Tenant has additional protections including limits on rent increases and just-cause eviction requirements — but Tenant must proactively verify and assert these rights.'},
+      {area:'Month-to-Month Conversion',level:'low',description:'Upon lease expiration January 31, 2025, if no notice is given, the lease converts to month-to-month — either party can then terminate with 30 days\' notice, creating housing insecurity.'},
+    ],
+    legal_nuances:[
+      {tag:'NORMAL WEAR & TEAR',detail:'"Normal wear and tear" — minor scuffs, faded paint, small nail holes — cannot be deducted from the security deposit. Only damage beyond normal use (large holes, stains, broken fixtures) is deductible.'},
+      {tag:'HABITABILITY REPAIR RIGHTS',detail:'If Landlord fails to make habitability repairs after written notice, Tenant may have the right to "repair and deduct" (up to one month\'s rent) or "rent withhold" into escrow under California law.'},
+      {tag:'RETALIATORY EVICTION PROTECTION',detail:'Landlord cannot serve an eviction notice because Tenant complained to a government agency, exercised a legal right, or contacted a tenants\' union. Retaliatory eviction is illegal in California.'},
+      {tag:'MILITARY SCRA RIGHTS',detail:'If Tenant is on active military duty, the Servicemembers Civil Relief Act (SCRA) allows lease termination with 30 days\' notice regardless of the lease term or early termination clause.'},
+    ],
+    suggested_actions: ACTIONS.lease,
+  },
+  will: {
+    doc_type:'Will or Trust Document', doc_class:'will_trust',
+    doc_title:'Last Will and Testament of Margaret Ann Kowalski — Analysis',
+    executive_summary:'This Last Will and Testament of Margaret Ann Kowalski, executed March 10, 2024 in Cook County, Illinois, is a comprehensive testamentary instrument that revokes all prior wills and establishes a complete estate plan. Robert James Kowalski (spouse) is named Executor with Carol Ann Briggs as alternate. Specific bequests include a diamond ring to Emily Rose Kowalski, a 1967 Ford Mustang to Thomas David Kowalski, and $10,000 to the Chicago Food Depository. The residuary estate passes to Robert, with a 30-day survivorship requirement, and then equally to Emily and Thomas per stirpes. A no-contest clause forfeits any bequest for beneficiaries who challenge the will. Critical note: beneficiary designations on retirement accounts and life insurance override this will and must be updated separately.',
+    key_points:[
+      {point:'30-Day Survivorship Requirement',detail:'All beneficiaries — including the spouse — must survive the Testator by 30 days to receive their bequest. If Robert dies within 30 days of Margaret, his share passes directly to Emily and Thomas.'},
+      {point:'Per Stirpes Distribution',detail:'If Emily or Thomas predeceases Margaret, their share passes to their own children (grandchildren of Margaret) by right of representation — not to the surviving sibling.'},
+      {point:'Minor Beneficiaries — UTMA Custodianship to Age 21',detail:'Any share passing to a minor is held under the Illinois Uniform Transfers to Minors Act by the named custodian until age 21 — not 18, providing additional oversight of inherited assets.'},
+      {point:'No-Contest (In Terrorem) Clause',detail:'Any beneficiary who contests or challenges the will forfeits their entire bequest. This is enforceable in Illinois if the contestant lacks probable cause for the challenge.'},
+      {point:'Digital Assets Authority',detail:'The Executor is authorized to access and manage digital assets including online accounts and cryptocurrency — an important modern provision many older wills lack.'},
+    ],
+    risk_assessment:[
+      {area:'Retirement Account Beneficiary Mismatch',level:'high',description:'The will explicitly notes that retirement accounts (401k, IRA) and life insurance pass by beneficiary designation — if those designations are outdated (e.g., naming a deceased person), the assets may pass incorrectly.'},
+      {area:'Probate Exposure',level:'medium',description:'Assets passing through this will are subject to Illinois probate — a public process costing 3–7% of the estate and taking 6–24 months. A revocable living trust would avoid probate entirely.'},
+      {area:'No-Contest Clause Risk',level:'medium',description:'The no-contest clause discourages challenges but cannot prevent a beneficiary from bringing a truly meritorious claim (e.g., undue influence, incapacity). The clause only applies if the challenger loses.'},
+      {area:'Guardian Nomination',level:'low',description:'Guardian nominations in a will are not legally binding — a court must approve any guardian appointment for minor children and may override the Testator\'s preference in extraordinary circumstances.'},
+    ],
+    legal_nuances:[
+      {tag:'WILL vs. BENEFICIARY DESIGNATION',detail:'Life insurance, IRAs, 401(k)s, and joint-titled property pass outside the will by operation of law. The will has no control over these assets — a coordinated review of all beneficiary designations is essential.'},
+      {tag:'EXECUTOR WITHOUT BOND',detail:'Robert Kowalski may serve as Executor without posting a surety bond — this saves cost but means beneficiaries have no insurance protection if the Executor mismanages the estate.'},
+      {tag:'ILLINOIS PRETERMITTED HEIR',detail:'Illinois law protects children accidentally omitted from a will — but this will names both Emily and Thomas explicitly, so pretermitted heir protections do not apply.'},
+      {tag:'CHARITABLE BEQUEST EIN',detail:'The $10,000 bequest to the Chicago Food Depository includes the EIN (36-2883476) — important for confirming the correct recipient and for Executor to claim any charitable estate tax deduction.'},
+    ],
+    suggested_actions: ACTIONS.will_trust,
+  },
+  poa: {
+    doc_type:'Power of Attorney', doc_class:'power_of_attorney',
+    doc_title:'Durable Financial Power of Attorney (Howard Steinberg) — Analysis',
+    executive_summary:'This Durable Power of Attorney for Finances, executed April 5, 2024 by Howard G. Steinberg in Austin, Texas, appoints Sandra L. Steinberg (spouse) as Agent and Kevin D. Steinberg (son) as Alternate Agent. The POA is durable — it remains effective even upon Howard\'s subsequent incapacity — and is effective immediately upon signing (not a "springing" POA requiring physician certification of incapacity). The Agent is granted broad authority over real property, financial accounts, investments, taxes, government benefits, legal matters, insurance, and business operations, subject to important limitations: the Agent may NOT make or change Howard\'s will, may NOT change beneficiary designations without written consent, and may NOT use assets for personal benefit except as authorized compensation of $50/hour.',
+    key_points:[
+      {point:'IMMEDIATE Effective Date',detail:'This POA is effective immediately upon signing — Sandra has authority to act now. A "springing" POA (activated only upon incapacity certified by 2 physicians) would provide different protections.'},
+      {point:'DURABLE — Survives Incapacity',detail:'The durable designation means the POA remains in full force even if Howard becomes mentally or physically incapacitated — a standard and critical provision for elder law planning.'},
+      {point:'Broad Financial Powers',detail:'Sandra can buy/sell real estate (including the Austin home), manage all bank accounts, trade securities, file taxes, apply for government benefits, and initiate or settle legal matters.'},
+      {point:'Agent Compensation — $50/Hour',detail:'Sandra is entitled to reasonable compensation not exceeding $50/hour for services rendered — unusual in a spousal POA but important to document to avoid later disputes about commingling.'},
+      {point:'Cannot Change Beneficiary Designations',detail:'Sandra may NOT change beneficiary designations on life insurance or retirement accounts without Howard\'s written consent — an important protection against self-dealing.'},
+    ],
+    risk_assessment:[
+      {area:'Immediate Effectiveness Risk',level:'high',description:'An immediately effective POA means Sandra can act on Howard\'s assets right now — even while Howard is fully competent. If the relationship deteriorates, this creates significant financial vulnerability.'},
+      {area:'Financial Institution Acceptance',level:'high',description:'Banks and brokerages may refuse to honor a POA that is older than 12 months or may require their own proprietary POA form — creating delays or refusals at critical moments.'},
+      {area:'No Gifting Authority Defined',level:'medium',description:'The POA limits gifts to the annual exclusion amount ($18,000/recipient) without court approval — but does not explicitly authorize gifts at all. Some institutions may require explicit gifting authorization language.'},
+      {area:'Alternate Agent Notification',level:'low',description:'The POA does not specify when or how the Alternate Agent (Kevin) is activated if Sandra is unable to serve — this ambiguity can create delays or disputes between family members.'},
+    ],
+    legal_nuances:[
+      {tag:'THIRD PARTY RELIANCE PROTECTION',detail:'Third parties acting in good faith on a copy of this POA are protected from liability — this facilitates acceptance but also means unauthorized actions by the Agent can be difficult to reverse.'},
+      {tag:'FIDUCIARY DUTY',detail:'Sandra owes Howard a strict fiduciary duty — loyalty, care, and the duty to keep assets separate. A breach (even unintentional) can result in civil liability and in some states, criminal elder abuse charges.'},
+      {tag:'REVOCATION WHILE COMPETENT',detail:'Howard may revoke this POA at any time while competent, by written revocation delivered to Sandra. Revocation should also be sent to any institution that has a copy on file.'},
+      {tag:'SPRINGING VS. IMMEDIATE',detail:'Because this POA is immediate, it is active during Howard\'s healthy years. Many estate planners prefer "springing" POAs to prevent premature or unauthorized use — discuss with your attorney which is appropriate.'},
+    ],
+    suggested_actions: ACTIONS.power_of_attorney,
+  },
+  eviction: {
+    doc_type:'Eviction Notice', doc_class:'eviction_notice',
+    doc_title:'3-Day Notice to Pay Rent or Quit (Pacific Crest Properties) — Analysis',
+    executive_summary:'This Three-Day Notice to Pay Rent or Quit was served on Carlos R. Mendez on March 8, 2024 by Pacific Crest Properties LLC for the premises at 712 Westlake Avenue, Unit 4, Seattle, Washington 98109. The total amount demanded is $2,047.50 ($1,950.00 rent + $97.50 late fee) for the March 2024 rental period. Under Washington law (RCW 59.12.030), Tenant has three days after service to either pay the full amount or vacate. Importantly, Washington State requires a 14-day notice for nonpayment before a 3-day notice can be served — the Tenant should verify this procedural prerequisite was met. Partial payment does not satisfy the notice. Retaliatory eviction is prohibited under RCW 59.18.240.',
+    key_points:[
+      {point:'$2,047.50 Total Due — 3-Day Deadline',detail:'Must pay $1,950.00 rent + $97.50 late fee in full by March 11, 2024 (3 days after March 8 service), OR vacate and surrender the unit. Partial payment does not cure the notice.'},
+      {point:'Payment Method — Money Order or Cashier\'s Check Only',detail:'Landlord will only accept money order or cashier\'s check. Personal checks are not accepted. Payment must be made to Pacific Crest Properties LLC at 4400 Aurora Avenue N, Suite 200, Seattle, WA.'},
+      {point:'Washington 14-Day Notice Prerequisite',detail:'Washington law (RCW 59.12.030) requires Landlord to first serve a 14-day notice before issuing a 3-day notice. Verify whether the 14-day notice was properly served — if not, this 3-day notice may be procedurally defective.'},
+      {point:'Retaliatory Eviction Prohibited',detail:'Under RCW 59.18.240, Landlord cannot evict in retaliation for reporting habitability issues, exercising a legal right, or organizing with other tenants. This is a complete defense if it applies.'},
+      {point:'Unlawful Detainer Timeline If Unpaid',detail:'If Tenant neither pays nor vacates, Landlord files an unlawful detainer complaint. Tenant has 5 business days to file a written answer. A hearing will be scheduled — non-appearance results in default judgment.'},
+    ],
+    risk_assessment:[
+      {area:'Procedural Defect — 14-Day Notice',level:'high',description:'Washington requires a 14-day pay-or-vacate notice before a 3-day notice — if this prerequisite was skipped, the entire notice is potentially void and the eviction action can be dismissed.'},
+      {area:'Service Method Verification',level:'high',description:'The notice was served by personal service. Verify the date, method, and service details are correct — improper service is a complete defense in an unlawful detainer action.'},
+      {area:'Court Appearance Required',level:'high',description:'If an unlawful detainer complaint is filed, Tenant MUST file a written answer within 5 business days. Failure to respond results in a default judgment for possession — automatic eviction.'},
+      {area:'Credit & Rental History Impact',level:'medium',description:'An eviction judgment appears on tenant screening reports (like LexisNexis RentBureau) for 7 years — a pay-and-cure resolution avoids this devastating long-term consequence.'},
+    ],
+    legal_nuances:[
+      {tag:'WASHINGTON 14-DAY PREREQUISITE',detail:'RCW 59.12.030 mandates a 14-day notice before the 3-day notice in nonpayment cases — this is a procedural prerequisite many landlords skip, creating a defense. Ask Landlord for proof the 14-day notice was served.'},
+      {tag:'LATE FEE LEGALITY',detail:'Washington limits late fees — they must be agreed upon in the lease and cannot be unreasonably high. The $97.50 fee (5%) should be verified against the lease terms to ensure it was properly disclosed.'},
+      {tag:'JUST CAUSE EVICTION',detail:'Seattle has a Just Cause Eviction Ordinance (SMC 22.206.160) — Landlord may need to cite a just cause for eviction beyond nonpayment. Verify whether this ordinance applies to this property.'},
+      {tag:'FREE LEGAL AID',detail:'Northwest Justice Project offers free legal aid to low-income tenants in Washington: (206) 464-1519. Seek help immediately — the response deadline is 5 business days from when the complaint is filed.'},
+    ],
+    suggested_actions: ACTIONS.eviction_notice,
+  },
+  w2: {
+    doc_type:'Tax Form (W-2/1040/1099)', doc_class:'tax_form',
+    doc_title:'IRS Form W-2 — Patricia J. Monroe (Horizon Financial Group) — Analysis',
+    executive_summary:'This Form W-2 for tax year 2023, issued by Horizon Financial Group LLC (EIN: 47-3821056) to Patricia J. Monroe (SSN: ***-**-4521), reports $87,400.00 in Box 1 taxable wages on a gross salary of approximately $95,000 — the $7,600 difference reflects pre-tax deductions for a 401(k) ($8,000) and other benefits. Box 2 reports $14,822.00 in federal income tax withheld, which Patricia reports on Form 1040 Line 25a. Box 4 Social Security tax withheld is $5,890.00 — exactly 6.2% of Box 3\'s $95,000, which is correct. The retirement plan checkbox (Box 13) is checked, which affects Patricia\'s ability to deduct Traditional IRA contributions depending on her MAGI. The filing deadline is April 15, 2024; Form 4868 grants an automatic 6-month filing extension (taxes still due April 15).',
+    key_points:[
+      {point:'Box 1 Wages: $87,400 (Not Gross Salary)',detail:'Box 1 excludes pre-tax 401(k) deferrals ($8,000) and health insurance premiums, explaining the difference from gross salary of ~$95,000. This is the taxable income figure used on Form 1040.'},
+      {point:'Box 2 Federal Tax Withheld: $14,822',detail:'Enter on Form 1040, Line 25a. Compare against actual tax liability to determine if Patricia owes additional tax or receives a refund. This amount may be insufficient if Patricia has significant investment income.'},
+      {point:'Box 4 Social Security Tax: $5,890 — Verify Accuracy',detail:'Should equal exactly 6.2% of Box 3 wages ($95,000 × 6.2% = $5,890.00). This checks out. Maximum Social Security wages in 2023 were $160,200 — Patricia\'s wages are well below the cap.'},
+      {point:'Box 13 Retirement Plan Checkbox: CHECKED',detail:'Patricia is covered by an employer retirement plan. This affects Traditional IRA deductibility — for single filers in 2023, the IRA deduction phases out between $73,000–$83,000 MAGI.'},
+      {point:'Box 12 Code D — 401(k) Contributions: $8,000',detail:'Patricia contributed $8,000 to her 401(k), below the 2023 limit of $22,500 (under 50) or $30,000 (50+). She could increase contributions to reduce future taxable income.'},
+    ],
+    risk_assessment:[
+      {area:'IRA Deductibility Phase-Out',level:'medium',description:'Box 13 is checked (retirement plan), and if Patricia\'s MAGI exceeds $73,000 (single), her Traditional IRA deduction is partially or fully phased out for 2023. Consider a Roth IRA instead.'},
+      {area:'Potential Underwithholding',level:'medium',description:'If Patricia has investment income, freelance income, or other sources of income beyond this W-2, her $14,822 federal withholding may be insufficient — she may owe additional tax plus underpayment penalties.'},
+      {area:'Multiple W-2 Social Security Overpayment',level:'low',description:'If Patricia had another employer in 2023, verify combined Box 3 wages across all W-2s did not exceed $160,200. Overpaid Social Security tax is claimed as a credit on Form 1040 Schedule 3.'},
+      {area:'W-2 Accuracy',level:'low',description:'Any discrepancy in name, SSN, employer EIN, or Box amounts should be corrected via Form W-2c requested from Horizon Financial Group before filing.'},
+    ],
+    legal_nuances:[
+      {tag:'BOX 13 IRA IMPACT',detail:'The retirement plan checkbox triggers IRS rules limiting deductible Traditional IRA contributions. Many taxpayers miss this interaction — verify MAGI against IRS Publication 590-A phase-out tables.'},
+      {tag:'CODE DD IS NOT TAXABLE INCOME',detail:'Box 12 Code DD ($6,200 employer health coverage cost) is purely informational — it is NOT added to taxable income. Many taxpayers misread this and incorrectly increase their reported income.'},
+      {tag:'APRIL 15 IS A PAYMENT DEADLINE',detail:'Form 4868 extends the filing deadline by 6 months, but does NOT extend the payment deadline. Interest accrues from April 15 on any unpaid balance — estimate and pay taxes by April 15 even if filing late.'},
+      {tag:'MISSING W-2 PROCEDURE',detail:'If W-2 is not received by February 15, contact Horizon Financial Group. If still not received, contact IRS at 800-829-1040. You may need to file using Form 4852 (substitute W-2) to meet the deadline.'},
+    ],
+    suggested_actions: ACTIONS.tax_form,
+  },
+  chips: {
+    doc_type:'Federal Act / Enacted Law', doc_class:'federal_act',
+    doc_title:'CHIPS and Science Act of 2022 — Analysis',
+    executive_summary:'The CHIPS and Science Act (Public Law 117-167), signed August 9, 2022, appropriates $52.7 billion to revitalize U.S. semiconductor manufacturing and research. The CHIPS for America Fund provides $39 billion in grants, loans, and loan guarantees for domestic semiconductor fabrication, with a 25% investment tax credit (Section 48D) for qualifying manufacturing equipment and facility construction. The act\'s most significant guardrail is a 10-year clawback provision: any recipient that significantly expands semiconductor manufacturing capacity in a "country of concern" (China, Russia, North Korea, Iran) within 10 years must repay the full grant amount with interest. Announced investments include TSMC ($65B, Arizona), Intel ($100B multi-state), Samsung ($17B Texas), and Micron ($125B memory). The NSF receives $81 billion over 5 years for basic research.',
+    key_points:[
+      {point:'$39B Manufacturing Incentives Fund',detail:'Grants, loans, and loan guarantees for semiconductor fab construction, expansion, and modernization in the United States. Priority given to leading-edge, advanced, and mature-node chips critical to national security.'},
+      {point:'25% Investment Tax Credit (Section 48D)',detail:'Advanced Manufacturing Investment Credit of 25% on qualifying semiconductor manufacturing equipment and facility construction costs. Direct pay option available for entities without sufficient tax liability.'},
+      {point:'10-Year China Clawback Provision',detail:'Any CHIPS grant recipient that significantly expands semiconductor manufacturing capacity in China, Russia, North Korea, or Iran within 10 years of award must repay the full grant plus interest — a major compliance obligation.'},
+      {point:'No Stock Buybacks or Dividends',detail:'Grant recipients are prohibited from stock buybacks or paying dividends during the grant period. Recipients must also provide childcare for facility workers and develop community investment plans.'},
+      {point:'$81B for NSF + $68B for DOE Science',detail:'Massive research funding: $81 billion for NSF over 5 years (including new Technology Directorate) and $68 billion for DOE Office of Science — the largest investment in basic research in U.S. history.'},
+    ],
+    risk_assessment:[
+      {area:'Clawback Compliance',level:'high',description:'"Significant expansion" in a country of concern triggers full repayment with interest. Recipients must carefully monitor their global manufacturing footprint for 10 years — any M&A activity could inadvertently trigger this.'},
+      {area:'Workforce Requirement Compliance',level:'medium',description:'Recipients must provide childcare for facility workers and file worker and community investment plans. Non-compliance with these conditions can jeopardize grant continuity.'},
+      {area:'Technology Leakage Risk',level:'medium',description:'The act imposes export control enhancements and technology transfer restrictions — recipients working with foreign partners or researchers must carefully manage IP and export compliance.'},
+      {area:'Implementation Timeline',level:'low',description:'Grant recipients face multi-year construction timelines and must comply with Davis-Bacon prevailing wage requirements, environmental review, and NEPA compliance — adding significant execution risk.'},
+    ],
+    legal_nuances:[
+      {tag:'MATURE NODE EXPANSION THRESHOLD',detail:'"Significant expansion" for mature-node chips (used in cars, appliances) is defined at a 5% capacity increase — an extremely low threshold that could be triggered by minor operational expansions.'},
+      {tag:'DIRECT PAY OPTION',detail:'Tax-exempt entities (universities, nonprofits) and early-stage companies with no tax liability can elect "direct pay" — receiving the 25% ITC as a cash refund rather than a tax credit offset.'},
+      {tag:'DAVIS-BACON PREVAILING WAGE',detail:'Construction of CHIPS-funded facilities must comply with Davis-Bacon Act prevailing wage requirements — significantly increasing labor costs vs. standard commercial construction.'},
+      {tag:'FOREIGN ENTITY OF CONCERN DEFINITION',detail:'The act restricts transactions with "foreign entities of concern" including SMIC and other Chinese state-linked semiconductor companies — recipients must conduct due diligence on their entire supply chain.'},
+    ],
+    suggested_actions:[
+      {icon:'⚖️',title:'Consult Regulatory Counsel',description:'CHIPS Act compliance requires specialized regulatory and export control counsel — engage attorneys experienced in ITAR, EAR, and federal grant compliance.',priority:'high'},
+      {icon:'📋',title:'Track 10-Year Clawback Timeline',description:'Calendar the clawback window and establish internal controls to monitor global manufacturing expansion and M&A activity that could trigger repayment obligations.',priority:'high'},
+      {icon:'💰',title:'Model Section 48D Tax Credit',description:'Work with tax advisors to maximize the 25% Advanced Manufacturing Investment Credit, including the direct pay election for entities with limited tax liability.',priority:'high'},
+      {icon:'📊',title:'Monitor Implementation Regulations',description:'Commerce Dept. continues issuing CHIPS program regulations — subscribe to NIST and Commerce notices to stay current on compliance requirements.',priority:'medium'},
+    ],
+  },
+  eo14110: {
+    doc_type:'Executive Order', doc_class:'executive_order',
+    doc_title:'Executive Order 14110 — Safe & Trustworthy AI — Analysis',
+    executive_summary:'Executive Order 14110, signed October 30, 2023, was the Biden Administration\'s comprehensive framework for AI safety, security, and governance. It required developers of "dual-use foundation models" (trained using more than 10²⁶ FLOPs) to notify the federal government and share red-team safety test results before public release. It directed NIST to develop AI safety standards, Commerce to develop watermarking guidance for AI-generated content, and DOE/Intelligence Community to evaluate AI risks to critical infrastructure. All federal agencies were required to designate a Chief AI Officer within 60 days. CRITICAL STATUS UPDATE: President Trump revoked EO 14110 on January 20, 2025 via Executive Order 14179, eliminating all of its directives. This document is now legally void.',
+    key_points:[
+      {point:'⚠️ REVOKED — January 20, 2025',detail:'EO 14110 was revoked by President Trump\'s EO 14179 on his first day in office. None of its directives are currently in effect. This analysis is historical only.'},
+      {point:'Dual-Use Foundation Model Threshold',detail:'Would have required notification and red-team sharing for models trained using more than 10²⁶ FLOPs — a threshold that covers GPT-4-class models and larger at the time of signing.'},
+      {point:'NIST AI Safety Standards',detail:'Directed NIST to create AI safety standards, tools, and tests — NIST AI RMF (Risk Management Framework) was developed in parallel and remains in effect as voluntary guidance even after revocation.'},
+      {point:'Federal Chief AI Officers',detail:'Required all federal agencies to designate Chief AI Officers within 60 days — many agencies did so. Some CAI Officer roles persist despite the EO\'s revocation.'},
+      {point:'AI Watermarking & Synthetic Content',detail:'Directed Commerce to develop watermarking and authentication guidance for AI-generated content — not implemented before revocation.'},
+    ],
+    risk_assessment:[
+      {area:'Regulatory Vacuum Post-Revocation',level:'high',description:'With EO 14110 revoked and no replacement federal AI safety framework enacted, AI developers face significant regulatory uncertainty. State laws (Colorado, California SB 1047-style proposals) are filling the gap inconsistently.'},
+      {area:'EU AI Act Compliance',level:'high',description:'While EO 14110 is revoked, the EU AI Act (effective August 2024) imposes similar and in some cases more stringent obligations for AI systems deployed in Europe — including high-risk AI system requirements.'},
+      {area:'State AI Legislation Patchwork',level:'medium',description:'Multiple U.S. states are enacting AI-specific legislation in the regulatory vacuum. Organizations must monitor state-level requirements in Colorado, Texas, Illinois, and others.'},
+      {area:'Voluntary NIST Framework',level:'low',description:'NIST\'s AI Risk Management Framework (AI RMF) remains available as voluntary guidance and is being referenced in contracts and procurement even without EO 14110\'s mandate.'},
+    ],
+    legal_nuances:[
+      {tag:'EO 14179 REVOCATION',detail:'Trump\'s EO 14179 ("Removing Barriers to American Leadership in Artificial Intelligence") explicitly revoked EO 14110 and directed agencies to review and rescind implementing actions — a clean policy reversal.'},
+      {tag:'EU AI ACT EXTRATERRITORIAL REACH',detail:'Even without EO 14110, U.S. AI companies serving EU users must comply with the EU AI Act — including conformity assessments for high-risk AI systems and transparency obligations for generative AI.'},
+      {tag:'NIST AI RMF PERSISTENCE',detail:'NIST\'s AI Risk Management Framework was developed under EO 14110 but is now an independent NIST publication — it remains a useful voluntary framework for AI governance programs.'},
+      {tag:'SECTION 230 INTERSECTION',detail:'AI-generated content liability remains unresolved — Section 230 protections for AI outputs are actively litigated, and EO 14110\'s revocation does not resolve this ongoing legal uncertainty.'},
+    ],
+    suggested_actions:[
+      {icon:'⚖️',title:'Monitor Federal AI Legislation',description:'Track Congressional AI bills (e.g., proposed AI Act equivalents) and agency-specific AI guidance from FTC, CFPB, EEOC, and FDA.',priority:'high'},
+      {icon:'🌍',title:'Assess EU AI Act Obligations',description:'If your AI system is used in Europe, conduct a risk classification assessment under the EU AI Act — high-risk systems face conformity assessments and registration requirements.',priority:'high'},
+      {icon:'📋',title:'Implement NIST AI RMF Voluntarily',description:'Adopt NIST\'s AI Risk Management Framework as an internal governance standard — it\'s increasingly referenced in government procurement and enterprise contracts.',priority:'medium'},
+      {icon:'📊',title:'Track State AI Legislation',description:'Monitor state-level AI laws in California, Colorado, Texas, Illinois, and NY — the patchwork is growing rapidly and compliance obligations may apply to your operations.',priority:'medium'},
+    ],
+  },
+};
+
+// ═══════════════════════════════════════════════════════
+//  LIBRARY
+// ═══════════════════════════════════════════════════════
+function renderLibrary(){
+  const fEl = document.getElementById('libFilters');
+  if(!fEl.children.length){
+    ['all','bill','act','immigration','contract','personal','exec'].forEach(cat=>{
+      const b=document.createElement('button');
+      b.className='libf'+(cat==='all'?' active':'');
+      b.dataset.cat=cat;
+      b.textContent=cat==='all'?'All':cat.charAt(0).toUpperCase()+cat.slice(1);
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.libf').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active'); renderLibGrid(cat);
+      });
+      fEl.appendChild(b);
+    });
+  }
+  renderLibGrid('all');
+}
+function renderLibGrid(filter){
+  const docs=filter==='all'?CORPUS:CORPUS.filter(d=>d.category===filter);
+  const grid=document.getElementById('libGrid');
+  if(!docs.length){grid.innerHTML='<div style="color:var(--text2);font-size:.85rem;padding:1rem">No documents in this category.</div>';return;}
+  grid.innerHTML=docs.map(d=>`
+    <div class="lc" onclick="loadLibDoc('${d.id}')">
+      <div class="lct">
+        <div class="lbdg lb-${d.badge}">${d.badge}</div>
+        <h3>${esc(d.title)}</h3>
+        <div class="lcdate">${esc(d.date)}</div>
+      </div>
+      <div class="lcb"><p class="lcexc">${esc(d.text.slice(0,240))}</p></div>
+      <div class="lcf">
+        <span class="lftags">${esc(d.tags)}</span>
+        <span class="lfact">Analyze →</span>
+      </div>
+    </div>`).join('');
+}
+function loadLibDoc(id){
+  const doc=CORPUS.find(d=>d.id===id);
+  if(!doc) return;
+  S.fileText=doc.text; S.fileName=doc.title+' (Library)';
+  S.docClass=doc.doc_class||'general';
+  goTab('analyze'); renderFileList();
+  document.getElementById('analyzeBtn').disabled=false;
+
+  // Use hardcoded analysis if available — instant, no API needed
+  const cached = LIBRARY_ANALYSES[id];
+  if(cached){
+    const opts={summary:true,keypoints:true,risks:true,nuances:true,actions:true,chat:true};
+    S.lastAnalysis = cached;
+    renderResults(cached, opts);
+    toast('Loaded: '+doc.title+' — instant analysis ready ✓','green');
+  } else {
+    toast('Loaded: '+doc.title+' — click Analyze to run AI analysis','green');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════
+function saveHistory(result){
+  if(!S.user) return;
+  const key='lx_hist_'+S.user.email;
+  const h=JSON.parse(localStorage.getItem(key)||'[]');
+  h.unshift({doc_title:result.doc_title||'Untitled',doc_type:result.doc_type||'Document',date:new Date().toLocaleDateString()});
+  localStorage.setItem(key,JSON.stringify(h.slice(0,30)));
+}
+function renderDashboard(){
+  const el=document.getElementById('dashContent');
+  if(!S.user){
+    el.innerHTML=`<div class="lockmsg"><div class="li">🔒</div><strong>Sign in to view your Dashboard</strong><p style="font-size:.83rem;margin-top:.3rem">Track your history, saved documents, and usage.</p><button class="hbtn hbtn-p" style="margin-top:.75rem" onclick="openAuth('login')">Sign In</button></div>`;
+    return;
+  }
+  const h=JSON.parse(localStorage.getItem('lx_hist_'+S.user.email)||'[]');
+  el.innerHTML=`
+    <div class="dshh"><h1>Welcome back, ${esc(S.user.name.split(' ')[0])} 👋</h1><p>Your legal intelligence overview.</p></div>
+    <div class="dsts">
+      <div class="dst"><div class="dsl">Docs Analyzed</div><div class="dsv">${h.length}</div><div class="dss">Total saved</div></div>
+      <div class="dst"><div class="dsl">Plan</div><div class="dsv" style="font-size:1.3rem;padding-top:.3rem">Free</div><div class="dss">Powered by Groq Llama 3.1</div></div>
+      <div class="dst"><div class="dsl">Last Analysis</div><div class="dsv" style="font-size:1rem;padding-top:.45rem">${h[0]?.date||'—'}</div><div class="dss">${esc(h[0]?.doc_type||'')}</div></div>
+      <div class="dst"><div class="dsl">Corpus Docs</div><div class="dsv">${CORPUS.length}</div><div class="dss">In RAG knowledge base</div></div>
+    </div>
+    <div class="dtwo">
+      <div class="dp">
+        <div class="dph">Recent Analyses</div>
+        <div class="dpb">${h.length===0?`<p style="font-size:.81rem;color:var(--text2)">No analyses yet. <span style="color:var(--gold);cursor:pointer" onclick="goTab('analyze')">Analyze your first document →</span></p>`:h.slice(0,8).map(x=>`<div class="hrow"><div class="hico">📄</div><div class="hnm">${esc(x.doc_title)}</div><div class="hdt">${esc(x.date)}</div></div>`).join('')}</div>
+      </div>
+      <div class="dp">
+        <div class="dph">Quick Actions</div>
+        <div class="dpb"><div class="acl">
+          <div class="aci" onclick="goTab('analyze')" style="cursor:pointer"><div class="acion">⚖️</div><div class="acbd"><div class="act">Analyze a New Document</div><div class="acd">Upload a contract, bill, or immigration form</div></div></div>
+          <div class="aci" onclick="goTab('library')" style="cursor:pointer"><div class="acion">📚</div><div class="acbd"><div class="act">Browse Document Library</div><div class="acd">Pre-loaded legislation and legal forms</div></div></div>
+        </div></div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function showError(msg){
+  clearInterval(_loadTimer);
+  document.getElementById('rcol').innerHTML=`
+    <div class="estate"><div class="esico">❌</div><div class="esttl">Analysis Failed</div>
+    <p class="essub" style="color:var(--text2)">${esc(msg)}</p>
+    <p style="font-size:.74rem;color:var(--text3);margin-top:.6rem">Double-check your Groq API key is valid at console.groq.com. Groq free tier allows 14,400 requests/day.</p></div>`;
+}
+let _toastT;
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(type==='green'?' green':type==='red'?' red':'');
+  t.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>t.classList.remove('show'),3500);
+}
+function esc(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>
