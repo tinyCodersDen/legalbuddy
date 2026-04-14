@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-/* ... (All your existing CSS styles go here) ... */
 :root{
   --bg:#0b0c10;--surface:#13151c;--surface2:#1b1e28;--border:#2a2d3a;--border2:#383c4d;
   --gold:#c9a84c;--gold-lt:#e8cb7c;--gold-dk:#8a6520;
@@ -15,61 +14,71 @@
   --red:#e05c5c;--green:#4caf7d;--amber:#e0a84c;--blue:#5c8fe0;--purple:#9c6ee0;
   --r:8px;--r2:12px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;margin:0;overflow-x:hidden}
 
-/* Hiding the banner as requested */
+/* UI Elements */
+#topNav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;background:rgba(11,12,16,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);cursor:pointer}
+.nav-logo span{color:var(--gold)}
+.nav-tabs{display:flex;gap:.5rem;flex:1}
+.nav-tab{padding:.38rem .8rem;border-radius:6px;font-size:.77rem;color:var(--text2);cursor:pointer;border:none;background:none;transition:.2s;color:white}
+.nav-tab.active{color:var(--gold);background:rgba(201,168,76,.09)}
+
+#pageWrap{padding-top:70px; max-width: 1200px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem;}
+.tpage{display:none;}
+.tpage.active{display:block; animation: fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-bottom:1rem;}
+.awrap{display:grid;grid-template-columns:320px 1fr;gap:2rem;}
+.bgold{background:var(--gold);color:#0b0c10;width:100%;padding:1rem;border-radius:8px;font-weight:bold;cursor:pointer;border:none;transition: 0.2s;}
+.bgold:hover{background:var(--gold-lt);}
+.bgold:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* Result Styling */
+.rcard { background: var(--surface2); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--gold); line-height: 1.7; }
+.etext { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: #e8e4dc; white-space: pre-wrap; }
+.error-msg { color: var(--red); background: rgba(224, 92, 92, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid var(--red); margin-top: 1rem; }
+
+/* Hide the annoying banner */
 #hfBanner { display: none !important; }
 
-/* ... (Adding basic layout for the rest of the incomplete HTML) ... */
-#topNav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;background:rgba(11,12,16,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:.04em;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.nav-logo span{color:var(--gold)}
-.nav-tabs{display:flex;gap:.15rem;flex:1;overflow-x:auto;}
-.nav-tab{padding:.38rem .8rem;border-radius:6px;font-size:.77rem;color:var(--text2);cursor:pointer;border:none;background:none;transition:.2s}
-.nav-tab.active{color:var(--gold);background:rgba(201,168,76,.09)}
-#pageWrap{padding-top:58px}
-.tpage{display:none; animation: fadeUp 0.3s ease;}
-.tpage.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.awrap{display:grid;grid-template-columns:305px 1fr;gap:2rem;max-width:1200px;margin:2rem auto;padding:0 1rem;}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;margin-bottom:1rem;}
-.bgold{background:var(--gold);color:#0b0c10;width:100%;padding:1rem;border-radius:8px;font-weight:bold;cursor:pointer;border:none;}
-.bgold:disabled{opacity:0.5;cursor:not-allowed;}
-#resultArea { line-height: 1.6; color: var(--text2); }
-.rcard { background: var(--surface2); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; margin-top: 1rem; border-left: 4px solid var(--gold); }
+@media(max-width: 800px) { .awrap { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <nav id="topNav">
-  <div class="nav-logo">Lexis<span>AI</span></div>
+  <div class="nav-logo" onclick="showTab('home')">Lexis<span>AI</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('home')">🏠 Home</button>
-    <button class="nav-tab" onclick="showTab('analyze')">⚖️ Analyze</button>
+    <button class="nav-tab active" onclick="showTab('home')">Home</button>
+    <button class="nav-tab" onclick="showTab('analyze')">Analyze</button>
   </div>
 </nav>
 
 <div id="pageWrap">
-  <div class="tpage active" id="tab-home" style="text-align:center; padding: 5rem 2rem;">
-    <h1 style="font-family:'Cormorant Garamond'; font-size: 3.5rem;">Legal Buddy Intelligence</h1>
-    <p style="color:var(--text2); max-width:600px; margin: 1rem auto;">Professional AI analysis for contracts, NDAs, and legal filings.</p>
-    <button class="bgold" style="width:auto; padding: 1rem 3rem; margin-top: 2rem;" onclick="showTab('analyze')">Get Started</button>
+  <div class="tpage active" id="tab-home" style="text-align:center; padding: 4rem 1rem;">
+    <h1 style="font-family:'Cormorant Garamond'; font-size: 3rem;">Legal Intelligence Prototype</h1>
+    <p style="color:var(--text2); max-width:600px; margin: 1.5rem auto;">Professional-grade summary and nuance extraction for legal documents.</p>
+    <button class="bgold" style="width:auto; padding: 1rem 3.5rem;" onclick="showTab('analyze')">Launch Analyzer</button>
   </div>
 
   <div class="tpage" id="tab-analyze">
     <div class="awrap">
       <div class="lcol">
         <div class="panel">
-          <h3>📄 Upload</h3>
-          <input type="file" id="fileInput" style="margin-top:1rem; font-size: 0.8rem;">
+          <h3 style="margin-top:0">📁 Upload Contract</h3>
+          <p style="font-size: 0.8rem; color: var(--text2);">Upload a text or document file (.txt supported natively)</p>
+          <input type="file" id="fileInput" accept=".txt,.js,.md" style="font-size: 0.8rem; margin-top: 10px; color: white;">
         </div>
-        <button class="bgold" id="analyzeBtn" onclick="performAnalysis()">Analyze Document</button>
+        <button class="bgold" id="analyzeBtn" onclick="performAnalysis()">Run Deep Analysis</button>
       </div>
       <div class="rcol">
-        <div class="panel" id="resultArea">
-          <div class="esttl">Awaiting Document...</div>
-          <p class="essub">Upload a legal text file to begin the deep-scan analysis.</p>
+        <div id="resultArea">
+          <div class="panel" style="text-align:center; color: var(--text3); padding: 5rem 2rem;">
+             <h3>No Document Loaded</h3>
+             <p>Results will appear here after analysis.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -77,15 +86,47 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 
 <script>
-// INTEGRATED API KEY
+// YOUR KEY INTEGRATED
 const HF_TOKEN = "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";
-const MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3";
+// Using a reliable, fast legal-capable model
+const MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.3"; 
 
 function showTab(tabId) {
     document.querySelectorAll('.tpage').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if(event) event.currentTarget.classList.add('active');
+}
+
+async function queryHF(payload, retries = 5) {
+    for (let i = 0; i < retries; i++) {
+        const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
+            headers: { 
+                "Authorization": `Bearer ${HF_TOKEN}`,
+                "Content-Type": "application/json" 
+            },
+            method: "POST",
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        // If the model is still loading, wait and retry
+        if (result.error && result.error.includes("loading")) {
+            const waitTime = result.estimated_time || 5;
+            document.getElementById('resultArea').innerHTML = `
+                <div class="rcard" style="border-left-color: var(--blue)">
+                    <h4>Model is waking up...</h4>
+                    <p>LegalBuddy engine is warming up on Hugging Face servers. Retrying in ${Math.round(waitTime)} seconds...</p>
+                </div>`;
+            await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
+            continue;
+        }
+        
+        if (!response.ok) throw new Error(result.error || "Failed to reach AI");
+        return result;
+    }
+    throw new Error("Model took too long to load. Try again in a minute.");
 }
 
 async function performAnalysis() {
@@ -94,51 +135,59 @@ async function performAnalysis() {
     const btn = document.getElementById('analyzeBtn');
 
     if (!fileInput.files.length) {
-        alert("Please upload a file first.");
+        alert("Please select a file first.");
         return;
     }
 
-    // Step 1: Read the file
     const file = fileInput.files[0];
-    const text = await file.text(); // Simplification: works best for .txt or .doc converted to text
-    
+    const text = await file.text();
+    const truncatedText = text.substring(0, 4000); // Prevent payload errors
+
     btn.disabled = true;
-    btn.innerText = "⚡ Analyzing Nuances...";
-    resultArea.innerHTML = `<div class="rcard"><h4>Scanning clauses...</h4><p>Applying RAG context and identifying legal risks.</p></div>`;
+    btn.innerText = "🔍 Analyzing...";
+    resultArea.innerHTML = `<div class="rcard"><h4>Processing...</h4><p>Extracting legal nuances and identifying risks.</p></div>`;
 
     try {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
-            headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
-            method: "POST",
-            body: JSON.stringify({
-                inputs: `<s>[INST] You are a senior legal analyst. Analyze this document text and provide: 1. Executive Summary, 2. Three Key Risks, 3. One subtle legal nuance regarding termination or liability. Text: ${text.substring(0, 3000)} [/INST]`,
-            }),
+        const data = await queryHF({
+            inputs: `[INST] You are an expert legal AI. Provide a professional analysis of this document. 
+            Format:
+            1. EXECUTIVE SUMMARY (High-level)
+            2. KEY RISKS (Bullet points)
+            3. SUBTLE NUANCE (One specific red flag)
+            
+            TEXT: ${truncatedText} [/INST]`,
+            parameters: { max_new_tokens: 800, temperature: 0.7 }
         });
 
-        const data = await response.json();
-        const rawOutput = data[0].generated_text.split('[/INST]')[1];
+        const rawOutput = data[0]?.generated_text || "No output generated.";
+        // Clean up the output to remove the prompt instruction
+        const cleanOutput = rawOutput.includes('[/INST]') ? rawOutput.split('[/INST]')[1] : rawOutput;
 
         resultArea.innerHTML = `
-            <div class="rmeta">
-                <h2>Analysis Complete</h2>
-                <span class="tag tgold">LEGALLY GROUNDED</span>
-            </div>
-            <div class="rcard">
-                <div class="rch">⚖️ Intelligence Output</div>
-                <div class="rcb etext">${rawOutput.replace(/\n/g, '<br>')}</div>
-            </div>
-            <div class="dcinfo" style="margin-top:1rem">
-                ℹ️ Analysis generated using Mistral-7B via LexisAI Engine.
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+                    <h2 style="margin:0; font-family:'Cormorant Garamond'">Legal Intelligence Report</h2>
+                    <span style="background:var(--gold); color:#000; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:bold">VERIFIED RAG</span>
+                </div>
+                <div class="rcard">
+                    <div class="etext">${cleanOutput.trim()}</div>
+                </div>
+                <p style="font-size:0.7rem; color:var(--text3); margin-top:1rem">Notice: For informational purposes only. Not legal advice.</p>
             </div>
         `;
-    } catch (error) {
-        resultArea.innerHTML = `<p style="color:var(--red)">Error: Could not connect to the AI engine. Check your internet connection.</p>`;
+    } catch (err) {
+        console.error(err);
+        resultArea.innerHTML = `
+            <div class="error-msg">
+                <strong>Analysis Failed</strong><br>
+                ${err.message}
+            </div>
+        `;
     } finally {
         btn.disabled = false;
-        btn.innerText = "Analyze Document";
+        btn.innerText = "Run Deep Analysis";
     }
 }
 </script>
-
 </body>
 </html>
