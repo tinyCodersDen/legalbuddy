@@ -586,7 +586,7 @@ function init(){
 //  HF KEY
 // ═══════════════════════════════════════════════════════
 function saveHFKey(){
-  const k = document.getElementById('hfKeyInput').value.trim();
+  const k = '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';
   if(!k || !k.startsWith('hf_')){ toast('Enter a valid Hugging Face token (starts with hf_…)', 'red'); return; }
   S.hfKey = k;
   localStorage.setItem('lx_hfkey', k);
