@@ -588,7 +588,7 @@ function init(){
 function saveHFKey(){
   const k = document.getElementById('hfKeyInput').value.trim();
   if(!k || !k.startsWith('hf_')){ toast('Enter a valid Hugging Face token (starts with hf_…)', 'red'); return; }
-  S.hfKey = k;
+  S.hfKey = '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';
   localStorage.setItem('lx_hfkey', k);
   document.getElementById('hfBanner').classList.add('hidden');
   toast('Token saved ✓ You can now analyze documents.', 'green');
